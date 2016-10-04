@@ -1,23 +1,13 @@
 <?php
-
-    $tmp = parse_ini_file('../config.ini', TRUE);
-
-    if (!isset($_SERVER['SERVER_NAME'])) {
-        $_SERVER['SERVER_NAME'] = 'local';
-    }
-
-    foreach ($tmp as $env => $ini) {
-        if (isset($ini['apphost']) && $_SERVER['SERVER_NAME'] == $ini['apphost']) {
-            Config::set($env, array_merge($tmp['all'], $ini));
-            $conf = TRUE;
-            break;
-        }
-    }
+    
+    $tmp = parse_ini_file(__DIR__  .'/../runtime.ini', TRUE);
+    
+    Config::set($tmp['environment'], $tmp);
+    
     if (!Config::initialized()) {
         die('No suitable configuration found for server ' . $_SERVER['SERVER_NAME'] . "\n");
     }
 
-// it turns out that no, you can't just do "static class Config{"
     class Config
     {
         private static $ini = array();
