@@ -1,7 +1,7 @@
 Library Online Course Reserves - Web
 -------------------------------------
 
-[![Build Status](https://proxy-01.library.ubc.ca/build-status/locr--cr-staff)]
+![Build Status](https://proxy-01.library.ubc.ca/build-status/locr--cr-staff)
 
 Production Deployment
 ----------------------
