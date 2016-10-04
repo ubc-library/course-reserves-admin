@@ -1,0 +1,137 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'broken': brokenlinks, 'newcount': newqcount, 'search': true} %}
+<div id="status-msgs">
+    <div class="row-fluid expand">
+        <div class="span11">
+            <span><b>Response: </b></span><span id="add-status">This is default.twig instead of {{ template_name }}.twig</span>
+        </div>
+        <div class="span1">
+            <a href="#" id="status-msgs-close-menu">Close &#215;</a>
+        </div>
+    </div>
+    <!-- /.row-fluid -->
+</div>
+
+<div class="container">
+
+    <div class="content expand" role="main" id="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+        <!-- ======================= App Starts Here ============================== -->
+
+        <!-- ======================= Row 1 - title and button ===================== -->
+        <div class="row-fluid expand">
+            <div class="span9">
+                <h1 class="item-details-title">Report Generator</h1>
+            </div>
+            <div class="span3 who">
+            </div>
+        </div>
+        <!-- /.row-fluid -->
+
+        <!-- ======================= Row 2, split into span and span 3 =========== -->
+        <div class="clearfix"></div>
+        <br>
+
+        <div class="row-fluid expand">
+
+            <!-- ======================= Left Hand Side ========================== -->
+            <div class="span12">
+                <p>
+                    <strong>Start Date:</strong>&nbsp;&nbsp;<input type="text" id="start_date">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <strong>End Date:</strong>&nbsp;&nbsp;<input type="text" id="end_date">&nbsp;&nbsp;&nbsp;&nbsp;
+                    <button type="button" class="btn btn-info" id="run_report">Run Report</button>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="#" target="_blank" id="report-download" style="display: none;"><i class="fa fa-cloud-download fa-2x"></i>&nbsp;&nbsp;Download CSV</a>
+                </p>
+                <br>
+                <br>
+                <div id="insert-table-here">
+
+                </div>
+            </div>
+            <!-- /span9 -->
+        </div>
+        <!-- /.row-fluid -->
+        <div class="clearfix"></div>
+        <br>
+    </div>
+    <!-- /.content.expand role= main-->
+
+    <!-- UX STUFF
+    <!-- Put Modals and other JS Driven UX Stuff here -->
+
+    <!-- /UX Stuff -->
+
+</div><!-- /.container -->
+
+<!-- Add JS after content-->
+<script>
+    $(function () {
+        $('.accordion').on('show', function (e) {
+            $(e.target).prev('.accordion-heading').find('.accordion-toggle').removeClass('collapsed');
+            $(e.target).prev('.accordion-heading').find('i.icon-chevron-right').removeClass('icon-chevron-right icon-chevron-down').addClass('icon-chevron-down');
+            e.stopPropagation();
+        });
+        $('.accordion').on('hide', function (e) {
+            $(this).find('.accordion-toggle').not($(e.target)).addClass('collapsed');
+            $(e.target).prev('.accordion-heading').find('i.icon-chevron-down').removeClass('icon-chevron-down icon-chevron-right').addClass('icon-chevron-right');
+            e.stopPropagation();
+        });
+    });
+    $(function () {
+        $("#start_date").datepicker({format: 'yyyy-mm-dd'});
+        $("#end_date").datepicker({format: 'yyyy-mm-dd'});
+    });
+
+    $('#run_report').on('click', function () {
+        $('#report-download').attr('href','').hide();
+        var _rt = $('#insert-table-here');
+        _rt.empty();
+        $.ajax({
+            url: '/reports.get',
+            data: {
+                start: $('#start_date').val(),
+                end: $('#end_date').val()
+            },
+            type: 'POST'
+        }).done(function (data) {
+            console.log(data);
+            var isFirst = true;
+            var _table = '<table id="report-table">';
+            var _th = '<thead>';
+            var _td = '<tbody>';
+            $.each(data.data, function(){
+                if (isFirst) {
+                    _th = _th + '<tr>';
+                }
+                _td = _td + '<tr>';
+                $.each(this, function (key, value) {
+                    if (isFirst) {
+                        _th = _th + '<th>' + key + '</th>';
+                    }
+                    _td = _td + '<td>' + value + '</td>';
+                });
+                _td = _td + '</tr>';
+                if (isFirst) {
+                    _th = _th + '</tr></thead>';
+                    isFirst = false;
+                }
+            });
+            _table = _table + _th;
+            _table = _table + _td;
+            _table = _table + '</table>';
+            _rt.html(_table);
+            $('#report-download').attr('href', data.url);
+            //console.log(_table);
+            //setTimeout will allow any gui related work, at a later date, to update
+            setTimeout(function(){
+                $('#report-table').dataTable();
+                $('#report-download').show();
+            },0);
+
+        }).fail(function () {
+            alert('failed');
+        });
+    });
+</script>

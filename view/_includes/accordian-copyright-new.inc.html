@@ -1,0 +1,383 @@
+<div class="accordion" id="accordion-copyright-{{ category }}-{{ type_id }}">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse" data-parent="#accordion-copyright-{{ category }}-{{ type_id }}" href="#collapse-copyright-{{ category }}-{{ type_id }}">
+                <i class="icon-chevron-right"></i> {{ type.name }} (<span id="{{ category }}-{{ type_id }}-count">loading...</span>)
+                {% if (role_programadmin or role_admin) %}
+                    TYPE: {{ type_id }}
+                {% endif %}
+            </a>
+        </div>
+        <div id="collapse-copyright-{{ category }}-{{ type_id }}" class="accordion-body collapse">
+            <div class="accordion-inner noborder">
+                <table class="table" id="{{ category }}-{{ type_id }}-table-items">
+                    <thead>
+                    <tr>
+                        <th>Item#</th>
+                        <th>Course</th>
+                        <th>Call#</th>
+                        <th>Title</th>
+                        <th>Page Range</th>
+                        <th>Author</th>
+                        <th>Requested</th>
+                        <th>Branch</th>
+                        <th>
+                            <input type="checkbox" class="checkbox-toggle copyright-new-checkbox-toggle-{{ type_id }} copyright-new-checkbox-toggle-{{ type_id }}-master" />
+                        </th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th >Item#</th>
+                        <th >Course</th>
+                        <th>Call#</th>
+                        <th>Title</th>
+                        <th>Page Range</th>
+                        <th>Author</th>
+                        <th>Requested</th>
+                        <th>Branch</th>
+                        <th>
+                            <input type="checkbox" class="checkbox-toggle copyright-new-checkbox-toggle-{{ type_id }} copyright-new-checkbox-toggle-{{ type_id }}-master" />
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <!-- <p id="remove-me-{{ type_id }}">No items on record under "{{ type.name }}"</p> -->
+            </div><!-- ./accordion-inner -->
+        </div><!-- ./collapse-inprogress -->
+    </div><!-- ./accordion-group -->
+</div><!-- accordion -->
+
+<!-- do not display this or make this visible, to be used elsewhere -->
+<div class="row-fluid expand" style="visibility: hidden; display: none;" id="copyright-new-bottom-controls-{{ type_id }}-html">
+    <div class="span9 offset3" id="v{{ status }}-bottom-controls left" style="text-align: right">
+        Change Status To
+        <div class="btn-group" id="menu-status_{{ type_id }}-btn-group">
+            <button class="btn btn-info copyright-new-bulk-control-{{ type_id }} copyright-new-bulk-control-{{ type_id }}-label" disabled>Select items first...</button>
+            <button class="btn btn-info copyright-new-bulk-control-{{ type_id }} copyright-new-bulk-control-{{ type_id }}-caret dropdown-toggle" data-toggle="dropdown" onclick="toggleAccordionVisibility('#collapse-copyright-{{ category }}-{{ type_id }}','#menu-status_{{ type_id }}-btn-group')" value="{{ status }}" disabled><span class="caret"></span></button>
+            <ul class="dropdown-menu status_{{ type_id }}dropdown-menu status-change-menus">
+                <li class="divider-header">Possible Next Statuses</li>
+                {% for k,v in status_names %}
+                    {% if k in next_status and k < 100 %}
+                        <li><a href="javascript:void(0)" class="li-status-change-{{ type_id }}" data-statusid="{{k}}">{{v}}</a></li>
+                    {% endif %}
+                {% endfor %}
+                <li class="divider-header">All/Other Statuses</li>
+                {% for k,v in status_names %}
+                    {% if k not in next_status and k < 100 %}
+                        <li><a href="javascript:void(0)" class="li-status-change-{{ type_id }}" data-statusid="{{k}}">{{v}}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <button class="btn btn-primary copyright_new_change-status-status-save" id="copyright_new_change-status-status_{{ type_id }}-save" data-statusid="-1" data-typeid="{{ type_id }}" disabled>Save</button>
+    </div>
+    <div class="span12" >
+        <div class="clearfix clear"></div>
+    </div>
+</div><!-- /.row-fluid -->
+
+<script>
+
+    window.changeStatusOptionStatusId['status_{{ status_id }}'] = '';
+    window.statusChangeSelected['status_{{ status_id }}'] = {};
+    window.pageDatatables['copyright_new_{{ type_id }}'] = {};
+    window.pageDatatables['copyright_new_{{ type_id }}'].bulkChangeSelected = [];
+
+    $(document).ready(function() {
+        var _dt = '#{{ category }}-{{ type_id }}-table-items';
+        setTimeout(function () {
+            pageDatatables['copyright_new_{{ type_id }}'].tableFirstload = true;
+            pageDatatables['copyright_new_{{ type_id }}'].table = $(_dt).DataTable({
+                "processing": true,
+                "serverSide": true,
+                "deferRender": true,
+                "responsive": true,
+                "searching": false,
+                "paging": true,
+                "pagingType": "full_numbers",
+                "ordering": true,
+                "info":     true,
+                "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+                "dom": '<"top"lp>rt<"#copyright-new-bottom-controls-{{ type_id }}"><"bottom"ip><"clear">',
+                "ajax": {
+                    "url": "/home.getCourseItemsFormatted/branch_id/{{ branch_id }}/type_ids/{{ type_id }}/status_ids/{{ status_ids|join(',') }}/isArchive/{{ isArchive }}"
+                },
+                "columns": [
+                    { "data": "item_id" },
+                    { "data": "lms_id" },
+                    { "data": "call_number" },
+                    { "data": "title" },
+                    { "data": "page_range" },
+                    { "data": "author" },
+                    { "data": "requested" },
+                    { "data": "" },
+                    { "data": "" }
+                ],
+                "columnDefs": [
+                    {
+                        "width": "5%",
+                        "targets": 0,
+                        "orderData": [ 0 ]
+                    } ,
+                    {
+                        "width": "10d%",
+                        "targets": 1,
+                        "orderData": [ 1,0 ]
+                    } ,
+                    {
+                        "width": "10%",
+                        "targets": 2,
+                        "orderData": [ 2 ]
+                    } ,
+                    {
+                        "width": "18%",
+                        "targets": 3,
+                        "orderData": [ 3,6,1 ]
+                    } ,
+                    {
+                        "width": "12%",
+                        "targets": 4,
+                        "orderData": [ 4 ]
+                    } ,
+                    {
+                        "width": "18%",
+                        "targets": 5,
+                        "orderData": [ 5 ]
+                    } ,
+                    {
+                        "width": "12%",
+                        "targets": 6,
+                        "orderData": [ 6,1 ]
+                    } ,
+                    {
+                        "width": "10%",
+                        "targets": -2,
+                        "data": null,
+                        "defaultContent": "",
+                        "orderData": [ 7,6,1 ]
+                    } ,
+                    {
+                        "width": "5%",
+                        "targets": -1,
+                        "data": null,
+                        "defaultContent": "",
+                        "orderable": false
+                    }
+                ],
+                "createdRow": function ( row, data, index ) {
+                    $('td', row).eq(0).html('<a href="/details.item/id/'+ data.item_id +'" target="_blank">' + data.item_id + '</a>');
+                    $('td', row).eq(1).html('<a href="/details.course/id/'+ data.course_id +'" target="_blank">' + (data.lms_id).replace(/\./g, '-') + '</a>');
+
+                    $('td', row).eq(-2).html(branchMap[data.branch_id]);
+                    $('td', row).eq(-1).html('<input type="checkbox" class="status-control copyright-new-checkbox-toggle-{{ type_id }} copyright-new-checkbox-toggle-{{ type_id }}-checkbox" data-iid="'+ data.item_id +'" data-cid="'+ data.lms_id +'" />');
+                },
+                "initComplete": function () {
+
+                    if(!aTableHasLoaded){
+                        $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
+                            console.log(message);
+                        };
+                        aTableHasLoaded = true;
+                    }
+
+                    if(pageDatatables['copyright_new_{{ type_id }}'].tableFirstload){
+                        $('#copyright-new-bottom-controls-{{ type_id }}').html($('#copyright-new-bottom-controls-{{ type_id }}-html').html().toString());
+                        pageDatatables['copyright_new_{{ type_id }}'].tableFirstload = false;
+                    }
+
+                    pageDatatables['copyright_new_{{ type_id }}'].tableInfo = pageDatatables['copyright_new_{{ type_id }}'].table.page.info();
+                    $('#{{ category }}-{{ type_id }}-count').html(pageDatatables['copyright_new_{{ type_id }}'].tableInfo.recordsTotal);
+
+                    // the save button
+                    $('#copyright_new_change-status-status_{{ type_id }}-save').on('click', function(){
+                        //console.log($(this).id);
+                        //console.log($(this).attr('id'));
+                        // save trigger
+                        var _st = document.getElementById($(this).attr('id')).dataset;
+
+                        /*
+                        console.log({
+                            statusID: _st.statusid,
+                            typeID: _st.typeid,
+                            items: window.pageDatatables['copyright_new_' + _st.typeid].bulkChangeSelected
+                        });
+                        */
+
+                        var requests = [];
+
+                        window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates = [];
+
+                        $('#status-updates-modal').reveal({
+                            animation: 'fadeAndPop',
+                            animationspeed: 300,
+                            closeonbackgroundclick: false,
+                            dismissmodalclass: 'close-reveal-modal',
+                            open: function () {
+
+                                $('#status-update-message').append("<p><em><strong>processing...</strong></em></p>");
+
+                                for(i = 0; i < window.pageDatatables['copyright_new_' + _st.typeid].bulkChangeSelected.length; i++) {
+                                    var _uri = "/licr.SetCIStatus?course=";
+                                    _uri += window.pageDatatables['copyright_new_' + _st.typeid].bulkChangeSelected[i].courseid;
+                                    _uri += '&item_id=';
+                                    _uri += window.pageDatatables['copyright_new_' + _st.typeid].bulkChangeSelected[i].itemid;
+                                    _uri += '&status=';
+                                    _uri += _st.statusid;
+                                    //console.log(_uri);
+                                    requests.push(
+                                            $.ajax({
+                                                url: _uri,
+                                                success: function (data) {
+                                                    window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates.push({
+                                                        command: this.url,
+                                                        response: data
+                                                    });
+                                                }
+                                            })
+                                    );
+                                }
+
+                                $.when.apply(undefined, requests).then(function(){
+                                    //console.log(window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates);
+                                    var re = /\?(.+)=(\d+)&(.+)=(\d+)&(.+)=(\d+)/;
+
+                                    for(i = 0; i < window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates.length; i++) {
+                                        var str = window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates[i].command;
+                                        //console.log(str);
+                                        var m;
+                                        if ((m = re.exec(str)) !== null) {
+                                            if (m.index === re.lastIndex) {
+                                                re.lastIndex++;
+                                            }
+                                            //console.log(m);
+                                        }
+                                        var _p;
+                                        // in case the url gets borked, it wont match
+                                        if(m != null && m.length == 7){
+                                            var _m = $.parseJSON(window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates[i].response);
+                                            _p = "<p><strong>Result:</strong>ItemID: " + m[4] + " | Success: " + _m.success +"</p>";
+                                        } else {
+                                            _p = "<p><strong>Result:</strong> <pre>" + window.pageDatatables['copyright_new_' + _st.typeid].bulkUpdates[i].response + "</pre></p>";
+                                        }
+                                        $('#status-update-message').append(_p);
+                                    }
+                                    $('#status-update-message').append("<strong>Click outside, or in the top right corner, to close. The window will reload</strong>");
+                                });
+
+                            },
+                            opened: function () {
+                                $('html,body').css('overflow','hidden');
+
+
+                            },
+                            close: function () {
+                                $('html,body').css('overflow','auto');
+                                location.reload();
+                            }
+                        });
+                    });
+
+                    if(pageDatatables['copyright_new_{{ type_id }}'].tableInfo.recordsTotal == 0){
+                        $('#accordion-copyright-{{ category }}-{{ type_id }}').fadeOut(350).hide();
+                    }
+                },
+                "drawCallback": function (settings) {
+
+                    //console.log(settings);
+
+                    // reset view, then attach handlers
+                    document.getElementById('copyright_new_change-status-status_{{ type_id }}-save').dataset.statusid = "-1";
+                    // update the master toggles (master toggle on stays checked if all visible checkboxes are also checked)
+                    $('.copyright-new-checkbox-toggle-{{ type_id }}' + '-master').each(function () {
+                        $(this).prop("checked", false);
+                    });
+                    $('.copyright-new-bulk-control-{{ type_id }}').each(function() {
+                        $(this).removeAttr('enabled').attr('disabled', 'disabled');
+                    });
+                    $('.copyright-new-bulk-control-{{ type_id }}-label').text('Select items first...');
+                    $('#copyright_new_change-status-status_{{ type_id }}-save').removeAttr('enabled').attr('disabled', 'disabled');
+
+                    // attach handler
+                    $('.copyright-new-checkbox-toggle-{{ type_id }}').off().on('click', function() {
+                        if($(this).hasClass('copyright-new-checkbox-toggle-{{ type_id }}-master')){
+                            //console.log(' ----- MASTER >>> ----- \n');
+                            var checkedOrFalse = $(this).prop("checked");
+                            $('.copyright-new-checkbox-toggle-{{ type_id }}-checkbox').each(function () {
+                                $(this).prop("checked", checkedOrFalse);
+                            });
+                            //console.log('\n ----- MASTER <<< -----');
+                        }
+
+                        var bulkEditClassSelector = '.copyright-new-checkbox-toggle-{{ type_id }}';
+
+                        //copyright-new-checkbox-toggle-1-master
+
+                        //console.log(' ----- CONTROLS >>> ----- \n');
+
+                        var _t = {
+                            selected: [],
+                            unselected: []
+                        };
+
+                        var _id;
+
+                        // assume all visible checkboxes are checked, if any one isn't, we will disable the masters from being checked
+                        var selectorMasterIsChecked = "checked";
+
+                        // keeps track of the bulk changes that need to be updated
+                        window.pageDatatables['copyright_new_{{ type_id }}'].bulkChangeSelected = [];
+
+                        // build k,v pairs of all selected items and the courses they are in
+                        $(bulkEditClassSelector + '-checkbox').each(function () {
+                            _id = $(this).data("iid");
+                            if($(this).prop("checked")){
+                                _t['selected'].push(_id);
+                                var _courseIds = getArrayOfCourseIds($(this).data('cid'));
+                                for (var i = 0; i < _courseIds.length; i++) {
+                                    window.pageDatatables['copyright_new_{{ type_id }}'].bulkChangeSelected.push({
+                                        itemid: _id,
+                                        courseid: _courseIds[i]
+                                    });
+                                }
+                            } else {
+                                selectorMasterIsChecked = false;
+                                _t['unselected'].push(_id);
+                            }
+                        });
+
+                        // update the master toggles (master toggle on stays checked if all visible checkboxes are also checked)
+                        $(bulkEditClassSelector + '-master').each(function () {
+                            selectorMasterIsChecked ? $(this).prop("checked", "checked") : $(this).prop("checked", selectorMasterIsChecked);
+                        });
+
+                        if( _t.selected.length > 0) {
+                            $('.copyright-new-bulk-control-{{ type_id }}').each(function() {
+                                $(this).removeAttr('disabled').attr('enabled', 'enabled');
+                            });
+                            if(document.getElementById('copyright_new_change-status-status_{{ type_id }}-save').dataset.statusid == "-1"){
+                                $('.copyright-new-bulk-control-{{ type_id }}-label').text('Select a status...');
+                            }
+                            $('.li-status-change-{{ type_id }}').off('click').on('click', function() {
+                                console.log($(this));
+                                $('.copyright-new-bulk-control-{{ type_id }}-label').text($(this).text());
+                                document.getElementById('copyright_new_change-status-status_{{ type_id }}-save').dataset.statusid = $(this).data('statusid');
+                                console.log('Items will be changed to statusID: ' + document.getElementById('copyright_new_change-status-status_{{ type_id }}-save').dataset.statusid);
+                                $('#copyright_new_change-status-status_{{ type_id }}-save').removeAttr('disabled').attr('enabled', 'enabled');
+                            });
+                        } else {
+                            document.getElementById('copyright_new_change-status-status_{{ type_id }}-save').dataset.statusid = "-1";
+                            $('.copyright-new-bulk-control-{{ type_id }}').each(function() {
+                                $(this).removeAttr('enabled').attr('disabled', 'disabled');
+                            });
+                            $('.copyright-new-bulk-control-{{ type_id }}-label').text('Select items first...');
+                            $('#copyright_new_change-status-status_{{ type_id }}-save').removeAttr('enabled').attr('disabled', 'disabled');
+                        }
+                    });
+                }
+            });
+
+        }, Math.random() * (9000 - 1000) + 1000);
+
+    } );
+</script>

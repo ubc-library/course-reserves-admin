@@ -1,0 +1,18 @@
+# IntelliJ project files
+.idea
+*.iml
+
+# Composer Related
+composer.phar
+vendor/
+thirdparty/
+
+# Application Outputs
+www/barcodes/*.pdf
+www/report_cache/*.pdf
+out
+gen
+cache/
+
+config.ini
+/resources/db/docstore/liquibase.properties

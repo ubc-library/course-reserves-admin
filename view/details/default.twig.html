@@ -1,0 +1,293 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'broken': brokenlinks, 'newcount': newqcount, 'search': true} %}
+<div id="status-msgs">
+    <div class="row-fluid expand">
+        <div class="span11">
+            <span><b>Response: </b></span><span id="add-status">This is default.twig instead of {{ template_name }}.twig</span>
+        </div>
+        <div class="span1">
+            <a href="#" id="status-msgs-close-menu">Close &#215;</a>
+        </div>
+    </div><!-- /.row-fluid -->
+</div>
+
+<div class="container">
+
+    <div class="content expand" role="main" id="main">
+        <!-- app title area and summon search -->
+        {% include 'title.inc.html' %}
+
+        <!-- custom content display starts here -->
+        <!-- item title area and dead link warning -->
+        {% include '__details___item_title_area.inc.html' %}
+
+        <!-- main content area -->
+        <div class="clearfix"></div><br>
+        <div class="row-fluid expand">
+
+            <!-- left hand side -->
+            <div class="span8">
+
+                <!-- ======================= request details ================= -->
+                {% if isCopyright %}
+                    <h1 class="details-section">Item Copyright Details</h1>
+                    {% include 'copyright.inc.html' with {'pdf':true} %}
+                    <div class="clearfix"></div><br>
+                {% endif %}
+
+                <!-- request details -->
+                <h1 class="details-section">Course Requests</h1>
+                {% for itemcourse in itemcourses %}
+                    {% include 'accordian-item.inc.html' with {'itemcourse': itemcourse} %}
+                {% endfor %}
+
+                <!-- bibliographic details -->
+                <div class="clearfix"></div><br><h1 class="details-section">bibliographic details</h1>
+                {% include 'bibliographic-details.inc.html' %}
+
+                <!-- item history -->
+                <div class="clearfix"></div><br><h1 class="details-section"></h1>
+                {% include 'item-history.inc.html' %}
+                {% include 'full-history.inc.html' %}
+            </div><!-- /span9 -->
+
+            <!-- right hand side -->
+            <div class="span4">
+
+	            <!-- uri -->
+	            <h1 class="details-section">Access URI(s)</h1>
+                {% include '__details___access_uris.inc.html' %}
+            </div>
+        </div><!-- /.row-fluid -->
+        <div class="clearfix"></div><br>
+    </div><!-- /.content.expand role= main-->
+</div><!-- /.container -->
+
+<div id="edit-note-modal" class="reveal-modal large">
+    <h2>Note Management</h2><br>
+
+    <textarea id="note-edit-submit" name="note-edit-submit" placeholder="Add note here.." rows="5"></textarea>
+    Note Applies To:<br>
+    {% for key,value in roles %}
+        {% if value != 'Administrator' %}
+            <label class="checkbox">
+                <input type="checkbox" id="inlineCheckbox-{{ key }}" data-role="note-groups" value="{{ key }}">{{ value }}
+            </label>
+        {% endif %}
+    {% endfor %}
+    <button class="btn" id="edit-note-submit-btn">Save Changes</button>
+    <span id="edit-note-success"></span>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<script>
+
+    //notify('hello', 'default', true, false);
+
+    $(document).ready(function() {
+        var openedNote = -1;
+        var editedNote = '';
+
+        $('#edit-note-submit-btn').on('click',function(){
+
+            var reopenEditNote = false;
+            var content = $('#note-edit-submit').val();
+            $('#add-status').html("Saving...");
+            $('#status-msgs').css('top','52px');
+            $('#main').css('opacity','0.1');
+
+            var selected = false; var hasContent = false; var saved = false;
+
+            var warning = 'Warning:'; var warningcount = 0;
+            var roles = '';
+
+            if (content.length > 0){ hasContent = true; } else { warning += ' ['+ ++warningcount +'] You need to enter a note.'; }
+
+            var firstChecked = false;
+            $(this).parent().find($("[data-role='note-groups']")).each(function(){
+                if($(this).is(':checked')){
+                    selected = true;
+                    if(firstChecked)
+                        roles += ',' + $(this).val();
+                    else {
+                        roles += $(this).val();
+                        firstChecked = true;
+                    }
+
+                }
+                console.log(roles);
+            });
+            if(!(selected)){
+                warning += ' ['+ ++warningcount +'] You need to select the group(s) (checkboxes) that the note will be sent to.';
+            }
+
+
+            if (selected && hasContent){
+
+                var jsonContent = JSON.stringify(content);
+                $.ajax({
+                    type: "POST",
+                    url: "{{base_url}}/update.editnote",
+                    data: { n: openedNote, c: jsonContent, r: roles},
+                    dataType: 'json'
+                })
+                        .done(function( data ) {
+                            ///var data = $.parseJSON(msg);
+                            if(data.success){
+                                $('#add-status').html("Saved! Close notice to reload page");
+                                $('#status-msgs').css('border-bottom-color','green');
+                                $('#edit-note-modal').trigger('reveal:close');
+                                saved = true;
+                                reopenEditNote = false;
+                            }
+                            else {
+                                $('#add-status').html("Error: " + data.message);
+                                $('#status-msgs').css('border-bottom-color','red');
+                                reopenEditNote = true;
+                            }
+                            console.log(data.message);
+                        })
+                        .fail(function( jqXHR, textStatus ) {
+                            $('#add-status').html("Fatal Error: Could not connect to server to save changes");
+                            $('#status-msgs').css('border-bottom-color','red');
+                        });
+            }
+            else {
+                $('#edit-note-modal').trigger('reveal:close');
+                $('#add-status').html(warning);
+                reopenEditNote = true;
+            }
+
+            $('#status-msgs-close-menu').on('click', function(){
+
+                console.log(reopenEditNote);
+                console.log(openedNote);
+
+                $('#status-msgs').css('top','0px').css('border-bottom-color','#F7C273');
+                $('#main').css('opacity','1');
+                if(reopenEditNote){
+                    $("[data-note-edit-id='"+openedNote+"']").trigger('click');
+                    $('#note-edit-submit').val(content);
+                }
+                if(saved){window.location.reload();}
+
+            });
+
+        });
+
+        $("[data-note-edit-id]").click(function(e){
+
+            var noteid = $(this).data('note-edit-id');
+            openedNote = noteid;
+            $('#note-edit-submit').val($('#note-'+openedNote+' > .note-content').text());
+            e.preventDefault();
+            e.stopPropagation();
+
+            $('#edit-note-modal').reveal({
+                animation: 'fade',
+                animationspeed: 300,
+                closeonbackgroundclick: false,
+                dismissmodalclass: 'close-reveal-modal',
+                open: function () {
+
+                    $('#edit-note-success').html(noteid);
+
+                },
+                opened: function () {
+                    $('html,body').css('overflow','hidden');
+
+
+                },
+                close: function () {
+                    $('html,body').css('overflow','auto');
+                }
+            });
+            return false;
+        });
+
+        $('#item-save-btn-top').on('click', function(){
+            var status = encodeURIComponent($( "#item-status option:selected" ).text());
+            var type = encodeURIComponent($( "#item-format option:selected" ).text());
+            var itemid = ($( "#item-id" ).text());
+            
+            var url = "{{base_url}}/update.topdetails";
+            var jqxhr = $.post(url, { i: itemid, s: status, t: type}, function(data) {
+                //log
+            })
+            .done(function(data) {
+                //log
+            })
+            .error(function(XMLHttpRequest, textStatus, errorThrown) {
+                //log
+             })
+            .fail(function(data) {
+                //log
+            });
+
+            return false;
+        });
+        
+
+        var nowTemp = new Date();
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+         
+        
+    });
+
+    $('[title!=""]').qtip();
+
+
+
+
+
+    var v{{ itemid }}_original_uri            = $('#{{ itemid }}-uri').val(); // not implemented
+    var v{{ itemid }}_statusmessage = '';
+
+    //change the uri
+    if ($('#{{ itemid }}-uri').val()!= v{{itemid }}_original_uri) {
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "{{base_url}}/update.",
+            data: {
+                i: v{{ itemid }}_itemid,
+                v: $('#{{ itemid }}-uri').val()
+            },
+            dataType: 'json'
+        })
+                .done(function( data ) {
+                    if(data.success){
+                        v{{ itemid }}_statusmessage = v{{ itemid }}_statusmessage.concat(" Processing Branch saved.");
+                        v{{ itemid }}_saved = true;
+                    }
+                    else {
+                        v{{ itemid }}_statusmessage = v{{ itemid }}_statusmessage.concat(" Error saving status: " + data.message);
+                        v{{ itemid }}_error = true;
+                    }
+                    console.log(v{{ itemid }}_statusmessage);
+                })
+                .fail(function( jqXHR, textStatus ) {
+                    v{{ itemid }}_statusmessage = v{{ itemid }}_statusmessage.concat(" Fatal Error: Could not connect to server to save dates");
+                    v{{ itemid }}_error = true;
+                });
+    }
+    else {
+        v{{ itemid }}_statusmessage = v{{ itemid }}_statusmessage.concat(" Processing Branch: [no change].");
+    }
+
+
+
+	function showSavedTimeout (type) {
+		var id = '#'+type+'-saved-modal';
+		$(id).reveal({
+			closeonbackgroundclick: false,
+			dismissmodalclass: 'close-reveal-modal',
+			opened: function(){
+				setTimeout(function(){
+					$(id).trigger('reveal:close');
+					window.location.reload();
+				},800);
+			}
+		});
+	}
+</script>

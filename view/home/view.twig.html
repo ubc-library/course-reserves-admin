@@ -1,0 +1,136 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'search': true} %}
+<div class="container homepage">
+<div class="content expand" role="main">
+<!-- ======================= Title and Summon Search ====================== -->
+{% include 'title.inc.html' %}
+<!-- ======================= App Search =================================== -->
+{% include 'search.inc.html' %}
+<!-- ======================= App Starts Here ============================== -->
+<div class="row-fluid expand">
+    <div class="span8 home-filter">
+       <!-- Start Filter:Location Block -->
+       <div class="btn-group" style="width: 190px">
+            <!-- use jquery to rewrite btn#id.text with the selected value -->
+            <span class="span-inverse" id="location-filter" style="width: 155px">Location: {{ branch_name }}</span>
+            <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" style="width: 35px"><span class="caret" style="border-top-color: #000;
+border-bottom-color: #000;"></span></button>
+            <ul class="dropdown-menu" id="location-filter-ul" style="width: 187px">
+                <li>
+                       <a href="#" class="location-toggle" data-id="-1">All</a>
+                </li>
+                {% for item in branches %}
+                <li>
+                       <a href="#" class="location-toggle" data-id="{{item.branch_id}}">{{item.name}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+       </div>
+       <script>
+           $('.location-toggle').each(function(){
+               $(this).on('click', function(){
+                   $('#location-filter').text('Location: ' + $(this).text());
+                   $('.homepage').css('opacity', '0.2');
+//                   $('body').css('background', 'url(http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/1-0.gif)').css('background-repeat', 'no-repeat').css('background-position', 'center');
+                   window.location = '/home/location/'+$(this).attr('data-id');
+               });
+               
+           });
+       </script>
+       <!-- End Filter:Location Block -->
+       
+       <!-- Start Filter:Role Block -->
+        <div class="btn-group" style="width: 200px">
+            <!-- use jquery to rewrite btn#id.text with the selected value -->
+            <span class="span-inverse" id="view-filter" style="width: 165px">View: New / In Process</span>
+            <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" style="width: 35px"><span class="caret" style="border-top-color: #000;
+border-bottom-color: #000;"></span></button>
+            <ul class="dropdown-menu" id="view-filter-ul" style="width: 197px">
+                <li>
+                    <a href="/home/location/{{branch_id}}">New / In Process</a>
+                </li>
+                <li>
+                    <a href="/home.complete/location/{{branch_id}}">Completed</a>
+                </li>
+                <li>
+                    <a href="/home.archive/location/{{branch_id}}">Archive</a>
+                </li>
+                <li>
+                    <a href="/home.copyright/location/{{branch_id}}">Copyright</a>
+                </li>
+            </ul>
+        </div>
+
+       <!-- <div class="btn-group">
+            <a class="btn btn-primary btn-success" id="role-filter" href="/home.copyright">Switch to Copyright View</a>
+       </div>
+        <div class="btn-group">
+            <a class="btn btn-inverse" id="complete-filter" href="/home.complete">View All</a>
+        </div> -->
+       <p>{{ message }}</p>
+    </div><!-- /.home-filter -->
+
+
+    <!-- pickslip controls -->
+    <div class="span4 print-pickslip-area">
+        <button class="btn btn-large btn-printing span8 offset4 trigger-print-pickslip" type="button" id="trigger-print" disabled>Print Selected Pick Slips (<span id="pick-slip-count" class="pick-slip-count">0</span>)</button>
+        <span class="span12 last-print-date-time">Last Print: <a href="{{ recent_pickslip.url }}" target="_blank"><span id="last-print-date">{{ recent_pickslip.time|date('D jS M Y') }}</span> at <span id="last-print-time">{{ recent_pickslip.time|date('H:i') }}</span></a></span>
+    </div>
+    <!-- /.pickslip controls -->
+</div><!-- /.row-fluid -->
+    
+
+{% if newrecs %}
+<!-- Awaiting Queues -->
+<div class="row-fluid expand" id="awaiting-section">
+    <div class="span12">
+        <h3>New Requests</h3>
+            {% for newtype in newrecs %}
+                {% include 'accordian-new.inc.html' with {'items': newtype.recs, 'types': newtype.types, 'item_suffix':newtype.suff, 'disp_label':newtype.disp, 'all_status':parsed_statuses, 'pcontrols':true} %}
+            {% endfor %}
+    </div>
+</div><!-- /.row-fluid -->
+<!-- End Awaiting Queues -->
+{% else %}
+    <h2>No New items for {{ branch_name }}.</h2>
+{% endif %}
+
+{% if inprocs %}
+<!-- In-Process Queues -->
+<div class="row-fluid expand" id="in-progress-section">
+    <div class="span12">
+        <h3>In Process</h3>
+        {% for inptype in inprocs %}
+            {% include 'accordian-in-progress.inc.html' with {'items': inptype.recs, 'item_suffix':inptype.suff, 'disp_label':inptype.disp, 'status': inptype.status_id, 'next_status':inptype.next_statuses, 'all_status':parsed_statuses} %}
+        {% endfor %}
+
+    </div>
+</div><!-- /.row-fluid -->
+{% else %}
+    <h2>No In Process items for {{ branch_name }}.</h2>
+<!-- End In-Process Queues -->
+{%endif%}
+
+
+
+    
+</div><!-- /.container = main-->
+
+<div id="pick-slip-modal" class="reveal-modal">
+    <h3>Pick Slip Notice</h3>
+    <span id="pick-slip-generation-status">Status: Pick Slips are being sent to server...</span>
+    <h6>Please confirm that you want to move these items from 'New' to 'In Stack Searching'</h6>
+    <div class="row-fluid expand">
+        <button class="btn btn-danger"  id="pickslips-cancel">Cancel</button>
+        <button class="btn btn-success" id="pickslips-confirm" onclick="update_pickslip_status()" disabled>Update Queue</button>
+    </div>
+    <em>You can visit the <a href="/pickslips.archive">pickslip archive</a> to reprint slips if necessary.</em>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+</div>
+<div class="cleafix"><br></div>
+<script>window.base_url="{{base_url}}";</script>
+
+<script>
+
+</script>

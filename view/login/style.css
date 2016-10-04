@@ -1,0 +1,9 @@
+.cwl_login_link{
+  text-align:center;
+  font-size:large;
+  background-color:white;
+  padding:10px;
+}
+.cwl_login_link a{
+  color:#900;
+}

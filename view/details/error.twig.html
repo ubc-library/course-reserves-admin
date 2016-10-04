@@ -1,0 +1,58 @@
+{% include 'menu.inc.html' with {'broken': brokenlinks, 'newcount': newqcount, 'search': true} %}
+<div class="container">
+<div class="content expand" role="main">
+
+<!-- ======================= Title and Login Logout ============================== -->
+
+<div class="row-fluid expand">
+    <div class="span9">
+        <h1>Library Course Reserves</h1>
+    </div>
+    <div class="span3">
+        <div class="who">
+            Welcome, {{firstname}}<br />
+            <a href="/login.bye">Sign Out</a><br />
+            <a href="http://ubc.summon.serialssolutions.com"
+               target="_blank">Search Summon
+                <i class="icon icon-external-link"></i>
+                <br />
+            </a>
+        </div><!-- ./who -->
+    </div>
+</div><!-- /.row-fluid -->
+
+<!-- ======================= App Starts Here ============================== -->
+
+<!-- ========================  Row 1 =======================  -->
+<div class="clearfix"></div><br>
+<div class="row-fluid expand">
+    
+    
+    <!-- ================  Left Hand Side  ================  -->
+    <div class="span12">
+        <h1>Error</h1>
+        <h4>More than likely the 'type_id' that was returned for this item was not
+        addressed in the 'switch_case' under details.item() - tell skk</h4>
+        <h6>.... or that item doesn't exist</h6>
+    </div><!-- /span12 -->
+    
+</div><!-- /.row-fluid -->
+<div class="clearfix"></div><br>
+
+
+
+</div><!-- /.content.expand role= main-->
+
+<!-- UX STUFF
+<!-- Put Modals and other JS Driven UX Stuff here -->
+
+<div id='pick-slip-modal' style="display: none">
+    
+    <div class="alert alert-error">
+        <strong>Pick Slip Notice</strong>
+    </div>
+    ebook Pick Slips have been sent to the printer
+</div>
+<!-- /UX Stuff -->
+
+</div><!-- /.container -->

@@ -1,0 +1,22 @@
+<!-- HISTORY -->
+<div class="alert alert-item-history info-box item-history">
+    <div class="info-box-header-wrap">
+        <i class="icon-time icon-flip-horizontal"></i>
+        <span class="info-box-header">Item History</span>
+    </div>
+    {% for row in itemhistory|reverse|slice(0,3) %}
+    <p>
+        <span class="item-history-log-date">{{ row.time|date("Y-m-d") }}</span>
+        <span class="item-history-log-time">{{ row.time|date("g:i a") }}</span>
+        <br>
+        <span class="item-history-log-message">Record details updated by
+            <span class="item-history-log-actor">{{ attribute(users, row.puid).firstname }} {{attribute(users, row.puid).lastname}}</span>
+        </span>
+        <br>
+        <span class="item-history-log-data-state" style="display: none;">{{ row.note }}</span>
+    </p>
+    <hr>
+    {% endfor %}
+    <button class="btn btn-info" id="view-full-history">View Entire History</button>
+</div><!-- /infobox -->
+<!-- HISTORY -->

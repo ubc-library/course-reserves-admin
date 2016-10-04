@@ -1,0 +1,85 @@
+<div class="accordion" id="accordion-complete-{{ type_id }}">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse" data-parent="#accordion-complete-{{ type_id }}" href="#collapse-complete-{{ type_id }}">
+            <i class="icon-chevron-right"></i> {{ type.name }} (<span id="complete-{{ type_id }}-count">loading...</span>)
+            </a>
+        </div>
+        <div id="collapse-complete-{{ type_id }}" class="accordion-body collapse">
+            <div class="accordion-inner noborder">
+                <table class="table" id="complete-{{ type_id }}-table-items">
+                    <thead>
+                    <tr>
+                        <th class="span1">Item#</th>
+                        <th class="span1">Course</th>
+                        <th class="span4">Call#</th>
+                        <th class="span8">Title</th>
+                        <th class="span8">Page Range</th>
+                        <th class="span8">Author</th>
+                        <th class="span4">Requested</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th class="span1">Item#</th>
+                        <th class="span1">Course</th>
+                        <th class="span4">Call#</th>
+                        <th class="span8">Title</th>
+                        <th class="span8">Page Range</th>
+                        <th class="span8">Author</th>
+                        <th class="span4">Requested</th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <!-- <p id="remove-me-{{ type_id }}">No items on record under "{{ type.name }}"</p> -->
+            </div><!-- ./accordion-inner -->
+        </div><!-- ./collapse-inprogress -->
+    </div><!-- ./accordion-group -->
+</div><!-- accordion -->
+
+
+<script>
+
+    $(document).ready(function() {
+
+        setTimeout(function () {
+
+            var table_{{ type_id }} = $('#complete-{{ type_id }}-table-items').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "deferRender": true,
+                "responsive": true,
+                "paging": true,
+                "pagingType": "full_numbers",
+                "sDom":'<"H"lfrp>t<"F"ip>',
+                //"pageLength": 25,
+                "ordering": false,
+                "info":     true,
+                "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+                "ajax": {
+                    "url": "/home.getCourseItemsFormatted/branch_id/{{ branch_id }}/type_ids/{{ type_id }}/status_ids/{{ statuses_complete|join(',') }}/isArchive/{{ isArchive }}"
+                },
+                "columns": [
+                    { "data": "item_id" },
+                    { "data": "lms_id" },
+                    { "data": "call_number" },
+                    { "data": "title" },
+                    { "data": "page_range" },
+                    { "data": "author" },
+                    { "data": "requested" }
+                ],
+                "createdRow": function ( row, data, index ) {
+                    $('td', row).eq(0).html('<a href="/details.item/id/'+ data.item_id +'" target="_blank">' + data.item_id + '</a>');
+                    $('td', row).eq(1).html('<a href="/details.course/id/'+ data.course_id +'" target="_blank">' + data.lms_id + '</a>');
+                },
+                "initComplete": function () {
+                    var table_{{ type_id }}_info = table_{{ type_id }}.page.info();
+                    $('#complete-{{ type_id }}-count').html(table_{{ type_id }}_info.recordsTotal);
+                },
+                "searching": false
+            });
+
+        }, Math.random() * (9000 - 1000) + 1000);
+
+    } );
+</script>

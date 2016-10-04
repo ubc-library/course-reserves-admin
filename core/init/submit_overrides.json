@@ -1,0 +1,77 @@
+{
+    "pdf_general": {
+
+    },
+    "pdf_article": {
+        "item_title": "Article Title",
+        "item_isxn": "ISSN"
+    },
+    "pdf_chapter": {
+        "collection_title": "Title",
+        "item_title": "Chapter / Section Title"
+    },
+
+    "pdf_other": {
+
+    },
+
+    "book_general": {
+        "item_isxn": "ISBN",
+        "notice": "<p><strong>Please note that this form is for requests to place books on physical reserves. If you wish to have the library create a PDF, please use the Book Chapter/Excerpt request.</strong></p>"
+    },
+
+    "book_chapter": {
+        "collection_title": "Title",
+        "item_title": "Chapter / Section Title",
+        "item_isxn": "ISBN",
+        "notice": "<p><strong>Please note that the library will investigate creating PDFs of requested materials if possible. If you already have a PDF, please consider using the PDF Upload feature.</strong></p>"
+    },
+
+    "ebook_general": {
+        "item_isxn": "ISBN"
+    },
+
+    "ebook_chapter": {
+        "collection_title": "Title",
+        "item_title": "Chapter / Section Title",
+        "item_isxn": "ISBN",
+        "notice": "<p><strong>Please note that the library will investigate creating PDFs of requested materials if possible. If you already have a PDF, please consider using the PDF Upload feature.</strong></p>"
+    },
+
+    "web_general": {
+        "item_author": "Author / Organization"
+    },
+
+    "electronic_article": {
+        "item_title": "Article Title",
+        "item_isxn": "ISSN",
+        "item_uri": "Article URL"
+    },
+
+    "stream_general": {
+
+    },
+
+    "stream_video": {
+        "item_author": "Director(s)",
+        "item_publisher": "Distributor",
+        "item_editor": "Producer(s)",
+        "item_pubdate": "Year"
+    },
+
+    "stream_music": {
+        "item_author": "Performer(s)",
+        "item_publisher": "Distributor",
+        "item_editor": "Composer(s)",
+        "item_pubdate": "Year"
+    },
+    "physical_general": {
+        "item_title": "Item / Object Name"
+    },
+    "physical_unknown_type": {
+        "item_title": "Object Name"
+    },
+    "undetermined": {
+        "item_title": "Object Name / Label"
+    }
+}

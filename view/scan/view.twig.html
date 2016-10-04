@@ -1,0 +1,82 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {search: false} %}
+<div class="container">
+	<div class="content expand">
+		<!-- ======================= Title and Summon Search ====================== -->
+		{% include 'title.inc.html' %}
+		<!-- ======================= App Search =================================== -->
+		{# include 'search.inc.html' #}
+		<!-- ======================= App Starts Here ============================== -->
+		<div class="row-fluid expand">
+			<h2>Pickslip Scanning</h2>
+			<form id="item_id_form">
+				<fieldset>
+					<legend>Scanned slips will be assigned:</legend>
+					<label for="cbshelf"> <input type="radio" value="shelf"
+						id="cbshelf" name="status" /> Available in Library <strong>Reserves</strong>
+					</label> <label for="cbstack"> <input type="radio" value="stack"
+						id="cbstack" name="status" /> Available in Library <strong>Stacks</strong>
+					</label>
+				</fieldset>
+				<fieldset>
+				  <legend>Scan pickslip (or type item ID#):</legend>
+				<p>
+					<input type="text" id="item_id" placeholder="Item ID#" /> <input
+						type="submit" value="Enter" />
+				</p>
+				</fieldset>
+			</form>
+			<p>Log:</p>
+			<div id="log">
+				<ul id="scanned"></ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+  $('#item_id').focus();
+  $('#cbshelf').prop('checked', false);
+  $('#cbstack').prop('checked', false);
+  $(document).on(
+      'submit',
+      '#item_id_form',
+      function() {
+        //check if target status is selected
+        var target = $('input[name=status]:checked').val();
+        if (!target) {
+          alert('Please select a status to assign to these items.');
+          return false;
+        }
+        var item_id = $('#item_id').val();
+        $('#item_id').val('');
+        if (!item_id.match(/^[0-9]+$/)) {
+          return false;
+        }
+        //change status iff current status is In Stack Search
+        var url = '/scan.acquire/itemid/' + item_id + '/target/' + target;
+        $.ajax(url, {
+          dataType : 'json',
+          type : 'get',
+          success : function(data) {
+            if (data.ok) {
+              $('#scanned').append(
+                  '<li>Item #' + item_id + ': ' + data.message + '</li>');
+            } else {
+              $('#scanned').append(
+                  '<li class="error">Item #' + item_id + ': ' + data.message
+                      + '</li>');
+            }
+          },
+          error : function() {
+            $('#scanned').append(
+                '<li class="error">Item #' + item_id + ': ERROR</li>');
+          },
+          complete : function() {
+            $('#log').scrollTop($('#log').height());
+          }
+        });
+        return false;
+      }).on('blur', '#item_id', function() {
+    $('#item_id').focus();
+  });
+</script>

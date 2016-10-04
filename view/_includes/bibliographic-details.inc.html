@@ -1,0 +1,137 @@
+<!-- ======================= Accordian Content Starts Here ============================== -->
+<div class="accordion" id="accordian-item-bibdata">
+<div class="accordion-group">
+<div class="accordion-heading">
+    <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse" data-parent="#accordian-item-bibdata" href="#collapse-accordian-item-bibdata">
+        <i class="icon-chevron-right"></i> View Details
+    </a>
+</div>
+<div id="collapse-accordian-item-bibdata" class="accordion-body collapse">
+<div class="accordion-inner">
+<!-- ======================= Accordian Content Starts Here ============================== -->
+
+<!-- DO NOT DELETE THIS DIV -->
+<div id="bibliographic-details-section">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="input-prepend input-prepend-required"><span class="add-on span6"><i>required fields marked in red</i></span></div>
+        </div>
+    </div>
+    {% for key,value in bibdata %}
+        <!-- <div class="row-fluid expand">
+            <div class="span12">
+                <div class="control-group">
+                <label class="control-label" for="{{ attribute(field_mapping,key) }}">{{ attribute(fieldtitles,key) }}</label>
+                    <div class="controls">
+                        <input class="span12 stored {% if attribute(required_fields,key) == 1 %}required{% endif %}" type="text" id="{{ attribute(field_mapping,key) }}" {% if attribute(field_mapping,key)=='item_uri' %}value="{{ bibdata.item_uri }}" disabled {% else %} value="{{ value }}"{% endif %}>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+
+
+        <div class="row-fluid">
+            <div class="span12">
+                <div class="input-prepend {% if attribute(required_fields,key) == 1 %}input-prepend-required{% else %}input-prepend-optional{% endif %}">
+                    <span class="add-on span2">{{ attribute(override_fields,key)?attribute(override_fields,key):attribute(default_fields,key).display_name }}</span>
+                    <input class="span10 stored" type="text" id="{{ attribute(field_mapping,key) }}"
+                            name="{{ attribute(default_fields,key).machine_name }}" value="{% if key == 'item_uri' %}{{ info.uri }}{% else %}{{ value }}{% endif %}"
+                    placeholder="{{ attribute(default_fields,key).placeholder }}" data-required="{% if attribute(required_fields,key) == 1 %}true{% else %}false{% endif %}"{% if key == 'item_uri' %}disabled{% else %}{% endif %}>
+                </div>
+            </div>
+        </div>
+
+    {% endfor %}
+
+    <!-- Save Changes -->
+    <div class="clearfix"></div><br>
+
+    <div class="row-fluid">
+        <div class="span3">
+            <button class="btn btn-orange" id="bib-data-save">Save</button>
+        </div>
+
+        <div class="span9" id="bibliographic-details-success">
+        </div>
+    </div>
+</div><!-- /.bibliographic-details-section -->
+
+<!-- ======================= Accordian Content ENDS Between Here ============================== -->
+</div></div></div></div>
+<!-- ======================= Accordian Content ENDS Between Here ============================== -->
+
+
+<script>
+    setInterval(requiredFieldsFilled,125);
+var itemid = {{ itemid }};
+var bibdata = {};
+var saved = false;
+{% for key,value in bibdata %}
+    bibdata.{{key}} = "{{ value }}";
+{% endfor %}
+
+//console.log (bibdata);
+
+$('#bibliographic-details-section input').each(function(){
+    $(this).on('change keydown paste input', function() {
+        var key = $(this).attr("id");
+        if($(this).val().toString() != bibdata[key]){
+            $(this).removeClass('stored').addClass('changed');
+        }
+        else {
+            $(this).removeClass('changed').removeClass('error').removeClass('success').addClass('stored');
+        }
+        //console.log ("bibdata."+key + " = " + $(this).val());
+    })
+});
+
+$('#bib-data-save').on('click', function(){
+    //$('#add-status').html("Saving...");
+    //$('#status-msgs').css('top','52px');
+    //$('#main').css('opacity','0.1');
+    
+    $('#bibliographic-details-section input').each(function(){
+        var key = $(this).attr("id");
+        if($(this).val().toString() != bibdata[key]){
+            bibdata[key] = $(this).val();
+            //console.log ("bibdata."+key + " = " + $(this).val());
+        }
+    });
+    var jsonString = JSON.stringify(bibdata);
+    console.log("Json Bibdata:");
+    console.log (jsonString);
+    $.ajax({
+        type: "POST",
+        url: "/details.updatebibdata",
+        data: { i: itemid, bibdata: jsonString },
+        dataType: 'json'
+    })
+    .done(function( data ) {
+        ///var data = $.parseJSON(msg);
+        if(data.success){
+            notify("Saved! Page will automatically reload",'success',true,true);
+            //$('#add-status').html("Saved! Close notice to reload page");
+            //$('#status-msgs').css('border-bottom-color','green');
+            //saved = true;
+        }
+        else {
+            notify("Error: " + data.message,'error',true,false);
+           //$('#add-status').html("Error: " + data.message);
+           //$('#status-msgs').css('border-bottom-color','red');
+        }
+        console.log(data.message);
+    })
+    .fail(function( jqXHR, textStatus ) {
+        notify("Fatal Error: Could not connect to server to save changes. Please contact LSIT.", 'error', true, false);
+        //$('#add-status').html("Fatal Error: Could not connect to server to save changes");
+        //$('#status-msgs').css('border-bottom-color','red');
+    });
+    $('#status-msgs-close-menu').on('click', function(){
+        //$('#status-msgs').css('top','0px').css('border-bottom-color','#F7C273');
+        //$('#main').css('opacity','1');
+        //if(saved){window.location.reload();}
+    });
+    return false;
+});
+</script>

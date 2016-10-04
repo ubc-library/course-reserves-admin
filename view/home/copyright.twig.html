@@ -1,0 +1,130 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'search': false} %}
+<div class="container homepage">
+    <div class="content expand" role="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+        <!-- ======================= App Search =================================== -->
+        {% include 'search.inc.html' %}
+        <!-- ======================= App Starts Here ============================== -->
+        <div class="row-fluid expand">
+            <div class="span9 home-filter">
+                <!-- Start Filter:Location Block -->
+                <div class="btn-group">
+                    <!-- use jquery to rewrite btn#id.text with the selected value -->
+                    <span class="span-inverse" id="location-filter" style="width: 155px">Location: {{ branch_name }}</span>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+                    <ul class="dropdown-menu" id="location-filter-ul">
+                        <li>
+                            <a href="#" class="location-toggle" data-id="-1">All</a>
+                        </li>
+                        {% for item in branches %}
+                        <li>
+                            <a href="#" class="location-toggle" data-id="{{item.branch_id}}">{{item.name}}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <script>
+                    $('.location-toggle').each(function(){
+                        $(this).on('click', function(){
+                            $('#location-filter').text("Location: "+$(this).text());
+                            $('.homepage').css('opacity', '0.2');
+//                            $('body').css('background', 'url(http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/1-0.gif)').css('background-repeat', 'no-repeat').css('background-position', 'center');
+                            window.location = '/home.copyright/location/'+$(this).attr('data-id');
+                        });
+                    });
+                </script>
+                <!-- End Filter:Location Block -->
+
+                <!-- Start Filter:Role Block -->
+                <div class="btn-group" style="width: 200px">
+                    <!-- use jquery to rewrite btn#id.text with the selected value -->
+                    <span class="span-inverse" id="view-filter" style="width: 165px">View: Copyright</span>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" style="width: 35px"><span class="caret" style="border-top-color: #000;
+border-bottom-color: #000;"></span></button>
+                    <ul class="dropdown-menu" id="view-filter-ul" style="width: 197px">
+                <li>
+                    <a href="/home/location/{{branch_id}}">New / In Process</a>
+                </li>
+                <li>
+                    <a href="/home.complete/location/{{branch_id}}">Completed</a>
+                </li>
+                <li>
+                    <a href="/home.archive/location/{{branch_id}}">Archive</a>
+                </li>
+                <li>
+                    <a href="/home.copyright/location/{{branch_id}}">Copyright</a>
+                </li>
+                    </ul>
+                </div>
+                <p>{{ message }}</p>
+            </div><!-- /.home-filter -->
+
+
+            <!-- pickslip controls -->
+            <div class="span3 print-pickslip-area">
+                <button class="btn btn-large btn-printing span8 offset4" type="button" id="trigger-print" disabled>Print Selected Pick Slips (<span id="pick-slip-count">0</span>)</button>
+                <span class="span12 last-print-date-time">Last Print: <a href="{{ recent_pickslip.url }}" target="_blank"><span id="last-print-date">{{ recent_pickslip.time|date('D jS M Y') }}</span> at <span id="last-print-time">{{ recent_pickslip.time|date('H:i') }}</span></a></span>
+            </div>
+            <!-- /.pickslip controls -->
+        </div><!-- /.row-fluid -->
+
+
+        <!-- Awaiting Queues -->
+        <div class="row-fluid expand" id="awaiting-section">
+            <div class="span12">
+                <h3>New Requests</h3>
+                {% if types %}
+                    {% for type_id,type in types %}
+                        {% include 'accordian-copyright-new.inc.html' with {'category': 'new', 'type_id': type_id, 'type':type, 'branch_id': branch_id, 'status_ids': statuses_new, 'status_names': status_names, 'isArchive': 0 , 'isHidden': 0, 'next_status': statuses_inprocess } %}
+                    {% endfor %}
+                {% else %}
+                    <p>There are no Complete items for {{ branch_name }}.</p>
+                {% endif %}
+            </div>
+        </div><!-- /.row-fluid -->
+        <!-- End Awaiting Queues -->
+
+
+
+        <!-- In-Process Queues -->
+        <div class="row-fluid expand" id="in-progress-section">
+            <div class="span12">
+                <h3>In Process</h3>
+                {% if statuses_inprocess %}
+                    {% for status_id in statuses_inprocess %}
+                        {% include 'accordian-copyright-in-progress.inc.html' with {'category': 'in-progress', 'type_id':  types|keys, 'type': '', 'branch_id': branch_id, 'statuses': statuses, 'status_ids': status_id, 'isArchive': 0 , 'isHidden': 0, 'statusNames': status_names } %}
+                    {% endfor %}
+                {% else %}
+                    <p>There are no Complete items for {{ branch_name }}.</p>
+                {% endif %}
+            </div>
+            </div>
+        </div><!-- /.row-fluid -->
+        <!-- End In-Process Queues -->
+
+
+
+        <!-- Completed Queues -->
+        <div class="row-fluid expand" id="complete-section">
+            <div class="span12">
+                <h3>Completed</h3>
+                {% if types %}
+                    {% for type_id,type in types %}
+                        {% include 'accordian-course-items-generic-by-type.inc.html' with {'category': 'complete', 'type_id': type_id, 'type':type, 'branch_id': branch_id, 'status_ids': statuses_complete, 'isArchive': 0 , 'isHidden': 0 } %}
+                    {% endfor %}
+                {% else %}
+                    <p>There are no Complete items for {{ branch_name }}.</p>
+                {% endif %}
+            </div>
+        </div><!-- /.row-fluid -->
+        <!-- End Cmopleted Queues -->
+
+
+
+
+    </div><!-- /.container = main-->
+</div>
+<div class="cleafix"><br></div>
+<script>window.base_url="{{base_url}}"; branchMap = {{ branch_map|json_encode|raw }}; </script>

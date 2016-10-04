@@ -1,0 +1,285 @@
+<div class="accordion" id="accordion-{{ category }}-{{ status_id }}">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse" data-parent="#accordion-{{ category }}-{{ status_id }}" href="#collapse-{{ category }}-{{ status_id }}">
+            <i class="icon-chevron-right"></i> {{ attribute(statusNames,status_ids) }} (<span id="{{ category }}-{{ status_id }}-count">loading...</span>)
+            </a>
+        </div>
+        <div id="collapse-{{ category }}-{{ status_id }}" class="accordion-body collapse">
+            <div class="accordion-inner noborder">
+                <table class="table" id="{{ category }}-{{ status_id }}-table-items">
+                    <thead>
+                    <tr>
+                        <th>Item#</th>
+                        <th>Course</th>
+                        <th>Call#</th>
+                        <th>Title</th>
+                        <th>Page Range</th>
+                        <th>Author</th>
+                        <th>Requested</th>
+                        <th>Branch</th>
+                        <th>
+                            <input
+                                    id="{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle-top"
+                                    type="checkbox"
+                                    class="status-toggle {{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle"
+                                    onclick="toggleCheckboxByClass('{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}', '{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle-top');"
+                            />
+                        </th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th >Item#</th>
+                        <th >Course</th>
+                        <th>Call#</th>
+                        <th>Title</th>
+                        <th>Page Range</th>
+                        <th>Author</th>
+                        <th>Requested</th>
+                        <th>Branch</th>
+                        <th>
+                            <input
+                                    id="{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle-bottom"
+                                    type="checkbox"
+                                    class="status-toggle {{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle"
+                                    onclick="toggleCheckboxByClass('{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}', '{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle-bottom');"
+                            />
+                        </th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <!-- <p id="remove-me-{{ status_id }}">No items on record under "{{ type.name }}"</p> -->
+            </div><!-- ./accordion-inner -->
+        </div><!-- ./collapse-inprogress -->
+    </div><!-- ./accordion-group -->
+</div><!-- accordion -->
+
+<!-- do not display this or make this visible, to be used elsewhere -->
+<div class="row-fluid expand" style="visibility: hidden; display: none;" id="bottom-controls-{{ status_id }}-html">
+    <div class="span9 offset3" id="v{{ status }}-bottom-controls left" style="text-align: right">
+        Change Status To
+        <div class="btn-group" id="menu-status_{{ status_id }}-btn-group">
+            <button class="btn btn-info" id="vstatus_{{ status_id }}-status-change-indicator-label" disabled>Select items first...</button>
+            <button class="btn btn-info dropdown-toggle" id="vstatus_{{ status_id }}-status-change-indicator-caret" data-toggle="dropdown" onclick="toggleAccordionVisibility('#collapse-{{ category }}-{{ status_id }}','#menu-status_{{ status_id }}-btn-group')" value="{{ status }}" disabled><span class="caret"></span></button>
+            <ul class="dropdown-menu status_{{ status_id }}dropdown-menu status-change-menus">
+                <li class="divider-header" id="append-next-status-{{ status_id }}-html">Possible Next Statuses</li>
+                <!--- <li><a href="#" class="status_{{ status_id }}-change" data-statusid=""></a></li>
+                <li class="divider"></li> -->
+                {% for k,v in next_status %}
+
+                {% endfor %}
+                <li class="divider-header">All/Other Statuses</li>
+                {% for k,v in all_status %}
+                {% if k not in next_status|keys %}
+                <li><a href="javascript:setChangeStatusOption({{ status_id }});" class="status_{{ status_id }}-change" data-statusid="{{k}}">{{v.status_name}}</a></li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+        <button class="btn btn-primary" id="change-status-status_{{ status_id }}-save" onclick="saveChangeStatusOption({{ status_id }});" disabled>Save</button>
+    </div>
+    <div class="span12" >
+        <div class="clearfix clear"></div>
+    </div>
+</div><!-- /.row-fluid -->
+
+<script>
+
+    window.changeStatusOptionStatusId['status_{{ status_id }}'] = '';
+    window.statusChangeSelected['status_{{ status_id }}'] = {};
+    window.pageDatatables['status_{{ status_id }}'] = {};
+
+    $(document).ready(function() {
+
+        var _values = {};
+        var _dt = '#{{ category }}-{{ status_id }}-table-items';
+
+        setTimeout(function () {
+            pageDatatables['status_{{ status_id }}'].tableFirstload = true;
+            pageDatatables['status_{{ status_id }}'].table = $(_dt).DataTable({
+                "processing": true,
+                "serverSide": true,
+                "deferRender": true,
+                "responsive": true,
+                "searching": false,
+                "paging": true,
+                "pagingType": "full_numbers",
+                "ordering": true,
+                "info":     true,
+                "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+                "dom": '<"top"lp>rt<"#bottom-controls-{{ status_id }}"><"bottom"ip><"clear">',
+                "ajax": {
+                    "url": "/home.getCourseItemsFormatted/branch_id/{{ branch_id }}/type_ids/{{ type_id|join(',') }}/status_ids/{{ status_id }}/isArchive/{{ isArchive }}"
+                },
+                "columns": [
+                    { "data": "item_id" },
+                    { "data": "lms_id" },
+                    { "data": "call_number" },
+                    { "data": "title" },
+                    { "data": "page_range" },
+                    { "data": "author" },
+                    { "data": "requested" },
+                    { "data": "" },
+                    { "data": "" }
+                ],
+                "columnDefs": [
+                    {
+                        "width": "5%",
+                        "targets": 0,
+                        "orderData": [ 0 ]
+                    } ,
+                    {
+                        "width": "10d%",
+                        "targets": 1,
+                        "orderData": [ 1,0 ]
+                    } ,
+                    {
+                        "width": "10%",
+                        "targets": 2,
+                        "orderData": [ 2 ]
+                    } ,
+                    {
+                        "width": "18%",
+                        "targets": 3,
+                        "orderData": [ 3,6,1 ]
+                    } ,
+                    {
+                        "width": "12%",
+                        "targets": 4,
+                        "orderData": [ 4 ]
+                    } ,
+                    {
+                        "width": "18%",
+                        "targets": 5,
+                        "orderData": [ 5 ]
+                    } ,
+                    {
+                        "width": "12%",
+                        "targets": 6,
+                        "orderData": [ 6,1 ]
+                    } ,
+                    {
+                        "width": "10%",
+                        "targets": -2,
+                        "data": null,
+                        "defaultContent": "",
+                        "orderData": [ 7,6,1 ]
+                    } ,
+                    {
+                        "width": "5%",
+                        "targets": -1,
+                        "data": null,
+                        "defaultContent": "",
+                        "orderable": false
+                    }
+                ],
+                "createdRow": function ( row, data, index ) {
+                    $('td', row).eq(0).html('<a href="/details.item/id/'+ data.item_id +'" target="_blank">' + data.item_id + '</a>');
+                    $('td', row).eq(1).html('<a href="/details.course/id/'+ data.course_id +'" target="_blank">' + (data.lms_id).replace(/\./g, '-') + '</a>');
+
+                    $('td', row).eq(-2).html(branchMap[data.branch_id]);
+                    $('td', row).eq(-1).html('<input type="checkbox" class="status-control {{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox" data-iid="'+ data.item_id +'" data-cid="'+ data.lms_id +'" />');
+                },
+                "initComplete": function () {
+
+                    if(!aTableHasLoaded){
+                        $.fn.dataTable.ext.errMode = function ( settings, helpPage, message ) {
+                            console.log(message);
+                        };
+                        aTableHasLoaded = true;
+                    }
+
+                    if(pageDatatables['status_{{ status_id }}'].tableFirstload){
+                        $('#bottom-controls-{{ status_id }}').html($('#bottom-controls-{{ status_id }}-html').html().toString());
+                        $('#bottom-controls-{{ status_id }}-html').remove();
+
+                        $.ajax( "/licr.GetNextStatuses?status={{ status_id }}" )
+                            .done(function (data) {
+                                var _d = JSON.parse(data).data;
+                                var str = '';
+                                for (var k in _d){
+                                    if (_d.hasOwnProperty(k)) {
+                                        str += '<li><a href="javascript:setChangeStatusOption({{ status_id }},  '+ k +')" id="li-status-change-'+ k +'" class="li-status-change status_{{ status_id }}-change" data-statusid="'+ k +'">'+ _d[k].status +'</a></li>';
+                                    }
+                                }
+                                $('#append-next-status-{{ status_id }}-html').after(str);
+                            })
+                            .fail(function () {
+                                alert('The Course Reserves System is currently experiencing high processing loads. Please reload this page to load all queue data. If this is a continuous problem, please contact UBC Library IT - you can state the following error code was generated: "ERROR_CODE_AJAX_100_UNREACHABLE_DB_OR_SERVER_LOAD_CRITICAL"');
+                            })
+                            .always(function () {
+                            });
+                        pageDatatables['status_{{ status_id }}'].tableFirstload = false;
+                    }
+
+                    pageDatatables['status_{{ status_id }}'].tableInfo = pageDatatables['status_{{ status_id }}'].table.page.info();
+                    $('#{{ category }}-{{ status_id }}-count').html(pageDatatables['status_{{ status_id }}'].tableInfo.recordsTotal);
+
+
+                    if(pageDatatables['status_{{ status_id }}'].tableInfo.recordsTotal == 0) {
+                        $('#accordion-{{ category }}-{{ status_id }}').fadeTo(500, 0, function(){
+                            $('#accordion-{{ category }}-{{ status_id }}').css("visibility", "hidden").css("display", "none")
+                        });
+                    }
+
+                    var _cb = ".{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox";
+                    var _cbt = ".{{ attribute(statusNames,status_ids)|replace({' ': ''})|lower }}-checkbox-toggle";
+
+                    var _s = _cb + ', ' + _cbt;
+                    var _k = 'status_{{ status_id }}';
+
+                    $(_s).change(function () {
+                        _values.selected   = [];
+                        _values.unselected = [];
+                        statusChangeSelected[_k].selected = [];
+
+                        $(_cb).each(function(){
+                            var _id = $(this).data("iid");
+                            _values[$(this).prop("checked") ? 'selected' : 'unselected'].push(_id);
+                            if($(this).prop("checked")){
+                                var _courseIds = getArrayOfCourseIds($(this).data('cid'));
+                                for (var i = 0; i < _courseIds.length; i++) {
+                                    statusChangeSelected[_k].selected.push({
+                                        itemid: _id,
+                                        courseid: _courseIds[i]
+                                    });
+                                }
+                            }
+                        });
+                        console.log('Selected: '+ _values.selected + ' Unselected: ' + _values.unselected );
+                        if( _values.selected.length > 0) {
+                            setCopyrightInProcessQueueDropDownState('{{ status_id }}','disabled', 'enabled');
+                        } else {
+                            setCopyrightInProcessQueueDropDownState('{{ status_id }}','enabled', 'disabled');
+                        }
+                    });
+
+                }
+            });
+
+            // Initialize mark.js on table "draw" (search)
+            pageDatatables['status_{{ status_id }}'].table.on('draw', function() {
+
+                /*
+                // Get context
+                var table_{{ status_id }}Content = $(table_{{ status_id }}.table().body());
+                // Get keyword
+                var table_{{ status_id }}keyword = table_{{ status_id }}.search();
+                // Remove previous marks
+                table_{{ status_id }}Content.unmark();
+                // Mark the new search keyword
+                //console.log('Marking ' + table_{{ status_id }}.search());
+                table_{{ status_id }}Content.mark(table_{{ status_id }}keyword, {
+                    // Define mark.js options (see https://markjs.io/)
+                    "separateWordSearch": true
+                });
+
+                */
+
+            });
+
+        }, Math.random() * (9000 - 1000) + 1000);
+
+    } );
+</script>

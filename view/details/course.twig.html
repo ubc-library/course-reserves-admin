@@ -1,0 +1,870 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'search': true} %}
+<div id="status-msgs">
+    <div class="row-fluid expand">
+        <div class="span11">
+            <span><b>Response: </b></span><span
+                id="add-status">This is default.twig instead of {{ template_name }}.twig</span>
+        </div>
+        <div class="span1">
+            <a href="#" id="status-msgs-close-menu">Close &#215;</a>
+        </div>
+    </div><!-- /.row-fluid -->
+</div>
+
+
+<div class="container">
+
+    <div class="content expand" role="main" id="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+
+        <!-- ======================= App Starts Here ============================== -->
+
+        <!-- ================  Row 1 - title and button ================  -->
+        <div class="row-fluid expand">
+            <div class="span12">
+                <h3 class="item-details-title">{{ externalTitle }}</h3>
+            </div>
+        </div><!-- /.row-fluid -->
+
+        <!-- ================  Row 2, split into spa9 and span 3 ================  -->
+        <div class="clearfix"></div>
+        <br>
+        <div class="row-fluid expand">
+
+
+            <div class="span12">
+                <!-- ======================================  quick status form  ===================================  -->
+                <div class="row-fluid expand">
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="item-branch">Processing Branch</label>
+                            <div class="controls" id="item-branch">
+                                <select class="span10" id="item-branch-selector" onchange="updateDefaultCourseBranch()">
+                                    {% for branch in branches %}
+                                    <option value="{{ branch.branch_id }}" {% if defaultBranch== branch.branch_id
+                                            %}selected{% endif %}>{{ branch.name|e }}
+                                    </option>
+                                    {% endfor %}
+                                </select><br><span style="font-size: 0.9em"><em>Modifies the owning branch for all
+                                course items</em></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span6 offset1">
+                        <div class="control-group">
+                            <label class="control-label" for="item-visibility">Clone Course</label>
+
+                            <div class="controls" id="item-visibility">
+                                <label class="span5">
+                                    <input type="text" name="clone-course-field" id="clone-course-field" value=""
+                                           placeholder="CourseID to clone *into*"><img
+                                        src="/css/images/ajax-loader.gif" id="ajax-loader"
+                                        style="display: none;"><br><span
+                                        style="font-size: 0.9em"><em>*Recipient Course</em><br><strong>If you are
+                                    cloning more than 30-50 items, it may take a
+                                    few minutes for the system to copy your items.</strong></span>
+                                </label>
+                            </div>
+                            <button class="btn btn-orange" id="item-clone">Clone</button>
+                            &nbsp;&nbsp;&nbsp;<span id="clone-course-title"></span>
+                        </div>
+                    </div>
+                    <div class="span2">
+                        <div class="control-group">
+                            <label class="control-label" for="item-branch">Visible</label>
+                            <div class="controls" id="item-branch">
+                                <input type="checkbox" id="cb_active" {%if active%}checked="checked"
+                                       {%endif%}/><br><span
+                                    style="font-size: 0.9em"><em>Course is displayed to students and
+                                instructors</em></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ================  Details  ================  -->
+                <div class="clearfix"></div>
+                <br>
+                <h1 class="details-section">details</h1>
+                <div class="row-fluid expand">
+                    <div class="span1">
+                        <div class="control-group">
+                            <label class="control-label" for="course-semester">Semester</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-semester" value="{{ semester }}"
+                                       disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span7">
+                        <div class="control-group">
+                            <label class="control-label" for="course-name">Course Name</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-name" value="{{ externalTitle }}"
+                                       disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span1">
+                        <div class="control-group">
+                            <label class="control-label" for="course-section">Section</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-section" value="{{ section }}"
+                                       disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="course-semester">Duration</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-duration" value="{{ duration }}"
+                                       disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row-fluid expand">
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="course-id">CourseID</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-id" value="{{ courseId }}" disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="course-externalid">External ID</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-externalid" value="{{ externalId }}"
+                                       disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span6">
+                        <div class="control-group">
+                            <label class="control-label" for="course-instructor">Instructor(s)</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="course-instructor" value="{{ lecturer }}"
+                                       disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================  Reserves  ================  -->
+                <div class="clearfix"></div>
+                <br>
+                <h1 class="details-section">
+                    {% if role_admin %}
+                    <a href="javascript:void(0)" id="delete-course-reserves" title="Delete all Course Reserves Items" class="btn btn-danger">Delete all Course Reserves Items</a>
+                    {% endif %}
+                    <a href="javascript:void(0)" id="report_physical" title="Report of physical items"><i
+                            class="icon-file">&nbsp;</i></a>
+                    reserves</h1>
+                <div class="row-fluid expand">
+                    <div class="span12">
+                        <div class="accordion" id="available-accordian">
+                            <div class="accordion-group">
+                                <div class="accordion-heading">
+                                    <a id="availItemsTrigger" class="accordion-toggle accordion-primary collapsed"
+                                       data-toggle="collapse" data-parent="#availItems" href="#availItems">
+                                        <i class="icon-chevron-right"></i> Available (<span id="item-available-count">{{ available_items|length | default("0") }}</span>)
+                                    </a>
+                                </div>
+                                <div id="availItems" class="accordion-body collapse">
+                                    <div class="accordion-inner noborder">
+
+                                        {% if available_items %}
+                                        <table class="table span12 tablesorter tablesorter-ice"
+                                               id="available-course-readings">
+                                            <thead>
+                                            <tr>
+                                                <th class="span1">Item#</th>
+                                                <th class="span6">Title</th>
+                                                <th class="span5">Author</th>
+                                                <th class="span5">Status</th>
+                                                <th class="span1">Link</th>
+                                                <th class="span1">Copy</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for k,v in available_items %}
+                                            <tr>
+                                                <td><a href="/details.item/id/{{ k }}" target="_blank">{{ k }}</a></td>
+                                                <td>
+                                                    {% if v.collection != '' %}<strong><em>{{ v.collection
+                                                    }}</em></strong><br>{% endif %}
+                                                    {{ v.title }}
+                                                    {% if v.bibdata.item_edition %}
+                                                    <br/>Edition: {{v.bibdata.item_edition}}
+                                                    {% endif %}
+                                                    {% if v.bibdata.journal_volume %}
+                                                    <br/>Volume: {{v.bibdata.journal_volume}}
+                                                    {% endif %}
+                                                    {% if v.bibdata.journal_issue %}
+                                                    &nbsp;Issue: {{v.bibdata.journal_issue}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ v.author }}</td>
+                                                <td>{{ v.status_name }}</td>
+                                                <td><a target="_blank" href="{{ v.shorturl }}"><i
+                                                        class="icon icon-link">&nbsp;</i></td>
+                                                <td><input type="checkbox" class="{{ courseId }}_copy_checkbox_avail"
+                                                           value="{{ k }}"/></td>
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="6">
+                                                    <!--  copy controls -->
+                                                    <div class="row-fluid">
+                                                        <div class="span5 offset7"
+                                                             id="course-copy-to-controls-available">
+                                                            <div class="row-fluid">
+                                                                <span class="span5" style="text-align: right;">Copy Selected To: </span>
+                                                                <input class="span4" type="text"
+                                                                       id="{{ courseId }}_clone_to_avail"
+                                                                       placeholder="type course number to see courses">
+                                                                <button class="btn btn-primary btn-orange"
+                                                                        id="{{ courseId }}_clone_to_avail_btn"
+                                                                        onclick="cloneCourse({{ courseId }},$('#{{ courseId }}_clone_to_avail').val(), '#{{ courseId }}_clone_to_avail_btn','.{{ courseId }}_copy_checkbox_avail')"
+                                                                        id="course-clone-button-available">
+                                                                    Copy Items
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--  /.copy controls -->
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                        {% else %}
+                                        No Available Items
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion" id="unavailable-accordian-not-cancelled">
+                            <div class="accordion-group">
+                                <div class="accordion-heading">
+                                    <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse"
+                                       data-parent="#unavailItems" href="#unavailItemsNotCancelled">
+                                        <i class="icon-chevron-right"></i> Unprocessed Items (<span
+                                            id="item-search-result-count">{{ unavailable_items_not_cancelled|length | default("0") }}</span>)
+                                    </a>
+                                </div>
+                                <div id="unavailItemsNotCancelled" class="accordion-body collapse">
+                                    <div class="accordion-inner noborder">
+                                        {% if unavailable_items_not_cancelled %}
+                                        <table class="table span12 tablesorter tablesorter-ice"
+                                               id="unavailable-course-readings-not-cancelled">
+                                            <thead>
+                                            <tr>
+                                                <th class="span1">Item#</th>
+                                                <th class="span6">Title</th>
+                                                <th class="span5">Author</th>
+                                                <th class="span5">Status</th>
+                                                <th class="span1">Link</th>
+                                                <th class="span1">Copy</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for k,v in unavailable_items_not_cancelled %}
+                                            <tr>
+                                                <td><a href="/details.item/id/{{k}}">{{ k }}</a></td>
+                                                <td>
+                                                    {% if v.collection != '' %}<strong><em>{{ v.collection
+                                                    }}</em></strong><br>{% endif %}
+                                                    {{ v.title }}
+                                                    {% if v.bibdata.item_edition %}
+                                                    <br/>Edition: {{v.bibdata.item_edition}}
+                                                    {% endif %}
+                                                    {% if v.bibdata.journal_volume %}
+                                                    <br/>Volume: {{v.bibdata.journal_volume}}
+                                                    {% endif %}
+                                                    {% if v.bibdata.journal_issue %}
+                                                    &nbsp;Issue: {{v.bibdata.journal_issue}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ v.author }}</td>
+                                                <td>{{ v.status_name }}</td>
+                                                <td><a target="_blank" href="{{ v.shorturl }}"><i
+                                                        class="icon icon-link">&nbsp;</i></td>
+                                                <td><input type="checkbox"
+                                                           class="{{ courseId }}_copy_checkbox_unavail_not_cancelled"
+                                                           value="{{ k }}"/></td>
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="6">
+                                                    <div class="row-fluid expand">
+                                                        <div class="span5 offset7"
+                                                             id="course-copy-to-controls-not-cancelled">
+                                                            <div class="row-fluid expand">
+                                                                <span class="span3" style="text-align: right;">Copy Selected To: </span>
+                                                                <input class="span6" type="text"
+                                                                       id="{{ courseId }}_clone_to_unavail_not_cancelled"
+                                                                       placeholder="type course number to see courses">
+                                                                <button class="btn btn-primary btn-orange"
+                                                                        id="'{{ courseId }}_clone_to_unavail_not_cancelled_btn"
+                                                                        onclick="cloneCourse({{ courseId }},$('#{{ courseId }}_clone_to_unavail_not_cancelled').val(),'#{{ courseId }}_clone_to_unavail_not_cancelled_btn', '.{{ courseId }}_copy_checkbox_unavail_not_cancelled')">
+                                                                    Copy Items
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--  /.copy controls -->
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                        </table>
+                                        {% else %}
+                                        No Unavailable Items
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="accordion" id="unavailable-accordian-cancelled">
+                            <div class="accordion-group">
+                                <div class="accordion-heading">
+                                    <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse"
+                                       data-parent="#unavailItems" href="#unavailItemsCancelled">
+                                        <i class="icon-chevron-right"></i> Cancelled Items (<span
+                                            id="item-search-result-count">{{ unavailable_items_cancelled|length | default("0") }}</span>)
+                                    </a>
+                                </div>
+                                <div id="unavailItemsCancelled" class="accordion-body collapse">
+                                    <div class="accordion-inner noborder">
+                                        {% if unavailable_items_cancelled %}
+                                        <table class="table span12 tablesorter tablesorter-ice"
+                                               id="unavailable-course-readings-cancelled">
+                                            <thead>
+                                            <tr>
+                                                <th class="span1">Item#</th>
+                                                <th class="span6">Title</th>
+                                                <th class="span5">Author</th>
+                                                <th class="span5">Status</th>
+                                                <th class="span1">Link</th>
+                                                <!-- <th class="span1">Copy</th> -->
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            {% for k,v in unavailable_items_cancelled %}
+                                            <tr>
+                                                <td><a href="/details.item/id/{{k}}">{{ k }}</a></td>
+                                                <td>
+                                                    {% if v.collection != '' %}<strong><em>{{ v.collection
+                                                    }}</em></strong><br>{% endif %}
+                                                    {{ v.title }}
+                                                    {% if v.bibdata.item_edition %}
+                                                    <br/>Edition: {{v.bibdata.item_edition}}
+                                                    {% endif %}
+                                                    {% if v.bibdata.journal_volume %}
+                                                    <br/>Volume: {{v.bibdata.journal_volume}}
+                                                    {% endif %}
+                                                    {% if v.bibdata.journal_issue %}
+                                                    &nbsp;Issue: {{v.bibdata.journal_issue}}
+                                                    {% endif %}
+                                                </td>
+                                                <td>{{ v.author }}</td>
+                                                <td>{{ v.status_name }}</td>
+                                                <td><a target="_blank" href="{{ v.shorturl }}"><i
+                                                        class="icon icon-link">&nbsp;</i></td>
+                                                <!-- <td><input type="checkbox"
+                                                           class="{{ courseId }}_copy_checkbox_unavail_cancelled"
+                                                           value="{{ k }}"/></td>
+                                                           -->
+                                            </tr>
+                                            {% endfor %}
+                                            </tbody>
+                                            <!--
+                                            <tfoot>
+                                            <tr>
+                                                <td colspan="5">
+                                                    <div class="row-fluid expand">
+                                                        <div class="span5 offset7" id="course-copy-to-controls">
+                                                            <div class="row-fluid expand">
+                                                                <span class="span3" style="text-align: right;">Copy Selected To: </span>
+                                                                <input class="span6" type="text"
+                                                                       id="{{ courseId }}_clone_to_unavail_cancelled"
+                                                                       placeholder="type course number to see courses">
+                                                                <button class="btn btn-primary btn-orange"
+                                                                        id="'{{ courseId }}_clone_to_unavail_cancelled_btn"
+                                                                        onclick="cloneCourse({{ courseId }},$('#{{ courseId }}_clone_to_unavail_cancelled').val(),'#{{ courseId }}_clone_to_unavail_cancelled_btn', '.{{ courseId }}_copy_checkbox_unavail_cancelled')">
+                                                                    Copy Items
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            </tfoot>
+                                            -->
+                                        </table>
+                                        {% else %}
+                                        No Cancelled Items
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div><!-- /.row-fluid -->
+
+
+                <!-- ================  User Table  ================  -->
+                <div class="clearfix"></div>
+                <br>
+                <h1 class="details-section">Users</h1>
+                <div class="row-fluid expand">
+                    <div class="span12">
+                        {% for rolekey,enrolment in enrolments %}
+                        <table class="table span12">
+                            <tr>
+                                <th colspan="5"><h2>{{ rolekey }} List ({{ enrolment|length }})</h2></th>
+                            </tr>
+                            <tr>
+                                <th class="span4">User</th>
+                                <th class="span3">Username (PUID)</th>
+                                <th class="span4">LibraryID</th>
+                                <th class="span3">Course Role</th>
+                                <th class="span4">Email</th>
+                            </tr>
+                            {% for user in enrolment %}
+                            <tr>
+                                <td><a href="{{base_url}}/details.user/id/{{ user.puid }}">{{ user.name }}</a></td>
+                                <td>{{ user.puid }}</td>
+                                <td>{{ user.libraryid }}</td>
+                                <td>{{ user.role }}</td>
+                                <td><a href="mailto:{{ user.email }}">{{ user.email }}</a></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                        {% endfor %}
+                    </div>
+                </div><!-- /.row-fluid -->
+
+
+            </div><!-- /span12 -->
+
+        </div><!-- /.row-fluid -->
+        <div class="clearfix"></div>
+        <br>
+
+
+    </div><!-- /.content.expand role= main-->
+
+    <!-- UX STUFF
+    <!-- Put Modals and other JS Driven UX Stuff here -->
+
+    <div id="clone-item" class="reveal-modal xlarge">
+        <div class="row-fluid">
+            <div class="span12">
+                <h3 style="text-transform: capitalize; margin: 8px 0 8px 0; font-weight: 300;">Cloning Items</h3>
+            </div>
+        </div>
+        <div id="clone-prog">
+            <!-- progress bar -->
+            <p id="clone-prog-items"></p>
+
+            <div class="progress progress-striped active">
+                <div class="bar" id="clone-prog-bar"></div>
+            </div>
+        </div>
+        <a class="close-reveal-modal">&#215;</a>
+    </div>
+    <!-- /UX Stuff -->
+
+</div><!-- /.container -->
+
+
+<div id="add-item-modal" class="reveal-modal xlarge">
+    <h2>Add Item</h2>
+    <p>Your PUID is {{ puid }}</p>
+    <div class="alert alert-danger">
+        Use this as a last resort. Connect is the appropriate palce to add items.
+    </div>
+    <hr>
+    <p>
+        <button class="btn btn-info" id="article-manual-submit">Electronic Article</button>
+        <button class="btn btn-info" id="book-manual-submit">Book</button>
+        <button class="btn btn-info" id="chapter-manual-submit">Chapter/Excerpt</button>
+        <button class="btn btn-info" id="dvd-manual-submit">DVD/Streaming Media</button>
+        <button class="btn btn-info" id="web-manual-submit">Web</button>
+        <button class="btn btn-info" id="pdf-manual-submit">PDF Upload</button>
+        <button class="btn btn-info" id="physical-manual-submit">Physical</button>
+
+    </p>
+
+    <hr>
+
+    <div class="clearfix"></div>
+    <button class="btn" onclick="javascript:closeAdd()">Add Item</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="submit-item" class="reveal-modal xxlarge">
+    <h3>Submit Item</h3>
+    <div id="submit-form"></div>
+    <button class="btn" id="submit-item-submit-btn">Submit Item</button>
+    <span id="submit-item-success"></span>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="submit-results" class="reveal-modal medium">
+    <h4>Request</h4><br>
+    <span id="submit-results-success"></span><br><br>
+    <button class="btn" id="submit-results-submit-btn">Okay</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="docstore-pre" class="reveal-modal large">
+    <h4>PDF Upload</h4><br>
+    <p><b>Note: </b>This system is for published works, such as book chapters or articles. Please <b><u>do not</u></b>
+        upload items such as PowerPoint slides [.ppt(x)] or images.<br>
+        What type of document would you like to upload?</p>
+    <div class="row-fluid">
+        <div class="span12">
+            <button class="btn btn-info span3"
+                    onclick="showDirectSubmitForm({ title:1, chaptertitle: 1, articleauthors: 1, publisher: 1, pubplace: 0, pubdate: 0, edition: 1, incpages: 1, isbn: 1, callnumber:1, file:1 },'PDF','docstore');">
+                Book Chapter
+            </button>
+            <button class="btn btn-info span3"
+                    onclick="showDirectSubmitForm({ articleauthors: 1, journaltitle: 1, journalissue:1, journalmonth:1, journalvolume:1, journalyear:1, callnumber:1, doi:1, articletitle:1, issn:1, incpages:1, file:1},'PDF','docstore');">
+                Article
+            </button>
+            <button class="btn btn-info span3"
+                    onclick="showDirectSubmitForm({ title:1, chaptertitle: 1, articleauthors: 1, publisher: 1, pubplace: 0, pubdate: 0, edition: 1, incpages: 1, isbn: 1, callnumber:1, file:1 },'PDF','docstore');">
+                Other/Unsure
+            </button>
+        </div>
+    </div>
+    <br>
+    <button class="btn" id="docstore-pre-cancel-btn">Cancel</button>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<script>
+
+    $('#available-course-readings').tablesorter();
+    $('#unavailable-course-readings-not-cancelled').tablesorter();
+    $('#unavailable-course-readings-cancelled').tablesorter();
+
+
+    function batchedCopy(from, to, arrayOfItemIds, errString, iteration, maxlimit, perc, percInc) {
+        var curlimit = 15, idString = '', _cloneBar = $('#clone-prog-bar'), _cloneProg = $('#clone-prog');
+
+        if (arrayOfItemIds.length < maxlimit) {
+            curlimit = arrayOfItemIds.length;
+        }
+
+        for (var i = 0; i < curlimit; i++) {
+            idString += arrayOfItemIds.shift() + ",";
+        }
+
+        idString = idString.slice(0, -1);
+
+        iteration += 1;
+        console.log("Iteration : " + iteration);
+        console.log("Copying : " + idString);
+        console.log(" ");
+
+        _cloneBar.css('width', perc + "%").removeClass('bar-success').addClass('bar-success');
+        perc += percInc;
+
+        setTimeout(function () {
+            $.ajax({
+                url: '/passtolicr.php',
+                data: {
+                    command: 'CopyCourse',
+                    from: from,
+                    to: to,
+                    item_id_multi: idString
+                },
+                dataType: 'json',
+                async: false
+            }).done(function (data) {
+                if (!data.success) {
+                    errString += idString;
+                } else if (arrayOfItemIds.length > 0) {
+                    $('#clone-prog-items').append(" - " + idString + '<br>');
+                    _cloneBar.css('width', perc + "%").removeClass('bar-success').addClass('bar-success');
+                    perc += percInc;
+                    setTimeout(function () {
+                        batchedCopy(from, to, arrayOfItemIds, errString, iteration, maxlimit, perc, percInc);
+                    }, 250);
+                } else {
+                    if (errString !== 'The system was unable to import the following course items. Please contact LSIT.') {
+                        alert(errString);
+                        alert('Cloning Complete - Not all your course items may have been imported. Please contact LSIT. The web page will reload when you click OK.');
+                    } else {
+                        _cloneBar.css('width', '100%').removeClass('bar-success').addClass('bar-success');
+                        alert('Your Course Items have been Imported. The web page will reload when you click OK.');
+                    }
+                    $('#clone-item').trigger('reveal:close');
+                    location.reload();
+                }
+            });
+        }, 250);
+    }
+
+    function cloneCourse(from, to, buttonToDisable, selector) {
+        if (typeof to === 'undefined' || to === '') {
+            alert("You need to enter a course to copy the items into.")
+            return false;
+        }
+
+        if (from == to) {
+            alert('You are attempting to clone this course\'s items into this course. Please select a different *recipient* course');
+            return false;
+        }
+
+        console.log("Starting Course Clone");
+
+        $(buttonToDisable).attr("disabled", "disabled");
+
+        var idString = '', msg = '';
+
+        if (selector !== '') {
+            $(selector).filter(":checked").each(function () {
+                idString += $(this).val() + ',';
+            });
+        }
+        if (idString !== '') {
+            idString = idString.slice(0, -1);
+            msg = ' The following items were selected to copy: ' + idString;
+        } else {
+            msg = ' All items will be cloned.';
+            idString = '';
+            $.ajax({
+                url: '/passtolicr.php',
+                data: {
+                    command: 'ListInstructorCIs',
+                    course: from
+                },
+                dataType: 'json',
+                async: false
+            }).done(function (data) {
+                if (!data.success) {
+                    alert('The system was unable to import the request course items. Please contact LSIT.');
+                } else {
+                    $.each(data.data, function (k, v) {
+                        idString += k + ',';
+                    });
+                    idString = idString.slice(0, -1);
+                }
+            });
+        }
+        var response = confirm("Click to Confirm Import of Course Items." + msg);
+        if (response == true) {
+            var batchSize = 15;
+            var perc = Math.floor(parseInt((100 / (idString.split(",").length / batchSize)) / 2));
+            $('#clone-item').reveal({
+                animation: 'fade',
+                animationspeed: 50,
+                closeonbackgroundclick: false,
+                dismissmodalclass: 'close-reveal-modal',
+                open: function () {
+                },
+                opened: function () {
+                    batchedCopy(from, to, idString.split(","), 'The system was unable to import the following course items. Please contact LSIT.', 0, batchSize, perc, perc);
+                },
+                close: function () {
+                }
+            });
+
+        } else {
+            $(buttonToDisable).removeAttr('disabled');
+            alert('Nothing was imported.');
+        }
+        return true;
+    }
+    //Need to put these as globals because we can't pass off values to menu.js booooo
+    var puid = '{{puid}}';
+    var course_id = '{{courseId}}';
+    var submitForm, directSubmitForm, initF;
+    var querySDate = '{{ info.startdate }}';
+    var queryEDate = '{{ info.enddate }}';
+    var env_url = '{{env_url}}';
+    var searchEntries = {};
+
+
+    $(document).ready(function () {
+        $('.accordion').on('show', function (e) {
+            $(e.target).prev('.accordion-heading').find('.accordion-toggle').removeClass('collapsed');
+            $(e.target).prev('.accordion-heading').find('i.icon-chevron-right').removeClass('icon-chevron-right icon-chevron-down').addClass('icon-chevron-down');
+            e.stopPropagation();
+        });
+        $('.accordion').on('hide', function (e) {
+            $(this).find('.accordion-toggle').not($(e.target)).addClass('collapsed');
+            $(e.target).prev('.accordion-heading').find('i.icon-chevron-down').removeClass('icon-chevron-down icon-chevron-right').addClass('icon-chevron-right');
+            e.stopPropagation();
+        });
+    });
+
+    function updateDefaultCourseBranch() {
+        var newID = $('#item-branch-selector option:selected').val();
+        $.ajax({
+            type: "POST",
+            async: false,
+            url: "{{base_url}}/update.course",
+            data: {
+                c: {{courseId}},
+                v: newID,
+                f: "branch"
+            },
+            dataType: 'json'
+        }).done(function (data) {
+            if (data.success) {
+                alert("Branch Updated. Reloading Page");
+            }
+            else {
+                alert("Branch could not be updated.");
+            }
+        }).fail(function (jqXHR, textStatus) {
+            alert("Fatal error trying to updat branch");
+        }).always(function () {
+            location.reload();
+        });
+    }
+
+    //populate course lookup area
+    $("#clone-course-field").bindWithDelay('blur keyup', function () {
+        $("#ajax-loader").css('display', 'inline');
+        var url = "{{base_url}}/update.fetchcourse";
+        var jqxhr = $.post(url, {c: $('#clone-course-field').val()}, function (data) {
+                    $("#ajax-loader").css('display', 'none');
+                })
+                .done(function (data) {
+                    $('#clone-course-title').text(data.title);
+                })
+                .error(function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert('error' + errorThrown);
+                })
+                .fail(function (data) {
+                    alert('fail');
+                })
+                .always(function (data) {
+                    $("#ajax-loader").css('display', 'none');
+                });
+    }, 500);
+
+    //clone course
+    $('#item-clone').on('click', function () {
+        var from = {{courseId}};
+        var to = $('#clone-course-field').val();
+        cloneCourse(from, to, '#item-clone', '');
+    });
+
+    (function ($) {
+
+        $.fn.bindWithDelay = function (type, data, fn, timeout, throttle) {
+
+            if ($.isFunction(data)) {
+                throttle = timeout;
+                timeout = fn;
+                fn = data;
+                data = undefined;
+            }
+
+            // Allow delayed function to be removed with fn in unbind function
+            fn.guid = fn.guid || ($.guid && $.guid++);
+
+            // Bind each separately so that each element has its own delay
+            return this.each(function () {
+
+                var wait = null;
+
+                function cb() {
+                    var e = $.extend(true, {}, arguments[0]);
+                    var ctx = this;
+                    var throttler = function () {
+                        wait = null;
+                        fn.apply(ctx, [e]);
+                    };
+
+                    if (!throttle) {
+                        clearTimeout(wait);
+                        wait = null;
+                    }
+                    if (!wait) {
+                        wait = setTimeout(throttler, timeout);
+                    }
+                }
+
+                cb.guid = fn.guid;
+
+                $(this).bind(type, data, cb);
+            });
+        };
+
+    })(jQuery);
+
+    $('#submit-results-submit-btn').on('click', function () {
+        $('#submit-results').trigger('reveal:close');
+        location.reload();
+    });
+
+    $('#cb_active').on('click', function () {
+        var action = 'DeactivateCourse';
+        if ($(this).prop('checked')) action = 'ActivateCourse';
+        $.ajax(
+                '/passtolicr.php',
+                {
+                    data: {
+                        command: action,
+                        course: {{courseId}},
+                        method:'get'
+                    }
+                }
+        );
+    });
+
+    $('#report_physical').click(function () {
+        window.open('/report.physical/course_id/' + course_id);
+    });
+
+
+    $('#delete-course-reserves').click(function () {
+
+        var r = confirm("Please press 'OK' to confirm you are clearing all items in this course");
+        if (r == true) {
+            var action = 'DeleteCourseItemRequests';
+
+            var jqxhr =
+                $.ajax(
+                    '/passtolicr.php', {
+                        data: {
+                            command: action,
+                            courseID: course_id
+                        }
+                    })
+                    .done(function() {
+                    })
+                    .fail(function() {
+                    })
+                    .always(function(data) {
+                        if(data.success) {
+                            alert( 'Success! Reloading Page' );
+                            location.reload();
+                        } else {
+                            alert( "Failed!" );
+                        }
+                    });
+        } else {
+
+        }
+    });
+</script>

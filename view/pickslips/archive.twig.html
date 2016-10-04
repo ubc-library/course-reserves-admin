@@ -1,0 +1,47 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'broken': brokenlinks, 'newcount': newqcount, 'search': true} %}
+<div id="status-msgs">
+    <div class="row-fluid expand">
+        <div class="span11">
+            <span><b>Response: </b></span><span id="add-status">This is default.twig instead of {{ template_name }}.twig</span>
+        </div>
+        <div class="span1">
+            <a href="#" id="status-msgs-close-menu">Close &#215;</a>
+        </div>
+    </div><!-- /.row-fluid -->
+</div>
+
+<div class="container">
+
+    <div class="content expand" role="main" id="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+        <h2>Pickslip Archive</h2>
+        <p>A list of previously run off pickslips.</p>
+        <!--<div id="pickslip-list">
+            {% for file in files|reverse %}
+                <a href="{{ file.url }}" target="_blank">{{ file.url }}</a><br />
+            {% endfor %}
+        </div>-->
+        <table class="table table-hover tablesorter tablesorter-ice" id="pickslip-table">
+            <thead>
+                <tr>
+                    <th>Branch</th>
+                    <th>Time</th>
+                    <th>URL</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for file in files|reverse %}
+                <tr>
+                    <td>{{ file.location }}</td>
+                    <td>{{ file.time }}</td>
+                    <td><a href="{{ file.url }}" target="_blank">{{ file.url }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+
+    </div>
+</div>

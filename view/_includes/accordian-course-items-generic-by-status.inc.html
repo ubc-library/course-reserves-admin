@@ -1,0 +1,108 @@
+<div class="accordion" id="accordion-{{ category }}-{{ status_id }}">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse" data-parent="#accordion-{{ category }}-{{ status_id }}" href="#collapse-{{ category }}-{{ status_id }}">
+            <i class="icon-chevron-right"></i> {{ attribute(statusNames,status_ids) }} (<span id="{{ category }}-{{ status_id }}-count">loading...</span>)
+            </a>
+        </div>
+        <div id="collapse-{{ category }}-{{ status_id }}" class="accordion-body collapse">
+            <div class="accordion-inner noborder">
+                <table class="table" id="{{ category }}-{{ status_id }}-table-items">
+                    <thead>
+                    <tr>
+                        <th class="span1">Item#</th>
+                        <th class="span1">Course</th>
+                        <th class="span4">Call#</th>
+                        <th class="span8">Title</th>
+                        <th class="span8">Page Range</th>
+                        <th class="span8">Author</th>
+                        <th class="span4">Requested</th>
+                    </tr>
+                    </thead>
+                    <tfoot>
+                    <tr>
+                        <th class="span1">Item#</th>
+                        <th class="span1">Course</th>
+                        <th class="span4">Call#</th>
+                        <th class="span8">Title</th>
+                        <th class="span8">Page Range</th>
+                        <th class="span8">Author</th>
+                        <th class="span4">Requested</th>
+                    </tr>
+                    </tfoot>
+                </table>
+                <!-- <p id="remove-me-{{ status_id }}">No items on record under "{{ type.name }}"</p> -->
+            </div><!-- ./accordion-inner -->
+        </div><!-- ./collapse-inprogress -->
+    </div><!-- ./accordion-group -->
+</div><!-- accordion -->
+
+<script>
+
+    $(document).ready(function() {
+
+        setTimeout(function () {
+            var table_{{ status_id }} = $('#{{ category }}-{{ status_id }}-table-items').DataTable({
+                "processing": true,
+                "serverSide": true,
+                "deferRender": true,
+                "responsive": true,
+                "searching": false,
+                "paging": true,
+                "pagingType": "full_numbers",
+                //"pageLength": 25,
+                "ordering": false,
+                "info":     true,
+                "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]],
+                "ajax": {
+                    "url": "/home.getCourseItemsFormatted/branch_id/{{ branch_id }}/type_ids/{{ type_id|join(',') }}/status_ids/{{ status_id }}/isArchive/{{ isArchive }}"
+                },
+                "columns": [
+                    { "data": "item_id" },
+                    { "data": "lms_id" },
+                    { "data": "call_number" },
+                    { "data": "title" },
+                    { "data": "page_range" },
+                    { "data": "author" },
+                    { "data": "requested" }
+                ],
+                "createdRow": function ( row, data, index ) {
+                    $('td', row).eq(0).html('<a href="/details.item/id/'+ data.item_id +'" target="_blank">' + data.item_id + '</a>');
+                    $('td', row).eq(1).html('<a href="/details.course/id/'+ data.course_id +'" target="_blank">' + data.lms_id + '</a>');
+                },
+                "initComplete": function () {
+                    var table_{{ status_id }}_info = table_{{ status_id }}.page.info();
+                    $('#{{ category }}-{{ status_id }}-count').html(table_{{ status_id }}_info.recordsTotal);
+
+
+                    if(table_{{ status_id }}_info.recordsTotal == 0) {
+                        $('#accordion-{{ category }}-{{ status_id }}').fadeTo(500, 0, function(){
+                            $('#accordion-{{ category }}-{{ status_id }}').css("visibility", "hidden").css("display", "none")
+                        });
+                    }
+
+                }
+            });
+
+            // Initialize mark.js on table "draw" (search)
+            table_{{ status_id }}.on('draw', function() {
+
+                // Get context
+                var table_{{ status_id }}Content = $(table_{{ status_id }}.table().body());
+                // Get keyword
+                var table_{{ status_id }}keyword = table_{{ status_id }}.search();
+                // Remove previous marks
+                table_{{ status_id }}Content.unmark();
+                // Mark the new search keyword
+                //console.log('Marking ' + table_{{ status_id }}.search());
+                table_{{ status_id }}Content.mark(table_{{ status_id }}keyword, {
+                    // Define mark.js options (see https://markjs.io/)
+                    "separateWordSearch": true
+                });
+
+            });
+
+        }, Math.random() * (9000 - 1000) + 1000);
+
+    } );
+</script>

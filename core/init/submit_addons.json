@@ -1,0 +1,33 @@
+{
+    "file": {
+        "display": 0,
+        "display_name": "File Upload",
+        "machine_name": "uploadfile",
+        "placeholder": "Select file to upload..."
+    },
+    "notes": {
+        "display": 1,
+        "display_name": "Note to Students",
+        "machine_name": "note_student",
+        "placeholder": "Please complete this reading before midterm exams.",
+        "tooltip": "If you would like to send a note to students e.g. 'Please read before Week 5', you can enter it here"
+    },
+    "staffnotes": {
+        "display": 1,
+        "display_name": "Processing Notes",
+        "machine_name": "note_staff",
+        "placeholder": "please insert any processing notes for staff here",
+        "tooltip": "Put any information here that may help us find the item as well as an other pertinent information."
+    },
+    "summon": {
+        "display": 0,
+        "machine_name": "summon"
+    },
+    "tags": {
+        "display": 1,
+        "display_name": "Tags",
+        "machine_name": "tags",
+        "placeholder": "enter, any, comma, separated, tags",
+        "tooltip": "Enter a comma-separated list of tags to be assigned to this Item"
+    }
+}

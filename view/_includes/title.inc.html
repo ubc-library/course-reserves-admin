@@ -1,0 +1,24 @@
+{% if error %}
+<div class="row-fluid expand">
+    <div class="span12 alert alert-error">
+        <p>{{ error }}</p>
+    </div>
+</div><!-- /.row-fluid -->
+{% endif %}
+<div class="row-fluid expand">
+    <div class="span10" id="main-title">
+        <h1>Library Course Reserves</h1>
+    </div>
+    <div class="span2">
+        <div style="text-align: right">
+            <a href="http://ubc.summon.serialssolutions.com"
+               target="_blank" class="btn btn-info" style="margin: 5px 0; width: 128px;">Search Summon
+                <i class="icon icon-external-link"></i>
+            </a>
+            <a href="http://webcat.library.ubc.ca"
+               target="_blank" class="btn btn-info" style="width: 128px;">Search Webcat
+                <i class="icon icon-external-link"></i>
+            </a>
+        </div>
+    </div>
+</div><!-- /.row-fluid -->

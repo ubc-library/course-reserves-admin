@@ -1,0 +1,24 @@
+{
+    "pdf_general": 1,
+    "pdf_article": 1,
+    "pdf_chapter": 1,
+    "pdf_other": 1,
+
+    "book_general": 0,
+    "book_chapter": 0,
+    "ebook_general": 0,
+    "ebook_chapter": 0,
+
+    "web_general": 0,
+
+    "electronic_article": 0,
+
+    "stream_general": 0,
+    "stream_video": 0,
+    "stream_music": 0,
+
+    "physical_general": 1,
+    "physical_unknown_type": 1,
+
+    "undetermined": 1
+}

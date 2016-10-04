@@ -1,0 +1,24 @@
+{
+    "pdf_general": "PDF - General",
+    "pdf_article": "PDF - Article",
+    "pdf_chapter": "PDF - Chapter",
+    "pdf_other": "PDF - Other",
+
+    "book_general": "Book",
+    "book_chapter": "Book Chapter",
+    "ebook_general": "eBook",
+    "ebook_chapter": "eBook Chapter",
+
+    "web_general": "Web Page",
+
+    "electronic_article": "Electronic Article",
+
+    "stream_general": "Media - General",
+    "stream_video": "Media - Video",
+    "stream_music": "Media - Audio",
+
+    "physical_general": "Physical",
+    "physical_unknown_type": "Box of Rocks",
+
+    "undetermined": "Format Unknown"
+}

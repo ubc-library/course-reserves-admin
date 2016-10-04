@@ -1,0 +1,761 @@
+{%  if itemcourse.item_instance.status_id not in [500,8]  %}
+    <div class="accordion accordion-item" id="accordian-course-{{ itemcourse.course_id }}" data-courseid="{{ itemcourse.course_id }}"
+         xmlns="http://www.w3.org/1999/html">
+    <div class="accordion-group">
+    <div class="accordion-heading">
+        <a class="accordion-toggle accordion-primary{% if uri_dead %}-error{% endif %} collapsed" data-toggle="collapse"
+           data-parent="#accordian-course-{{ itemcourse.course_id }}" href="#collapse-accordian-course-{{ itemcourse.course_id }}">
+            <i class="icon-chevron-right"></i> {{ itemcourse.course_info.title }}
+        </a>
+    </div>
+    <div id="collapse-accordian-course-{{ itemcourse.course_id }}" class="accordion-body collapse">
+    <div class="accordion-inner">
+    <!-- ======================= Accordian Content Starts Here ============================== -->
+
+    <div id="request-details-section-{{ itemcourse.course_id }}">
+    <!-- visibility -->
+    <h1 class="details-section inner">Request</h1>
+
+    <div class="row-fluid">
+        <div class="span3">
+            <label class="control-label" for="{{ itemcourse.course_id }}-item-parent-course">Course Information:</label>
+
+            <div class="control-group" id="{{ itemcourse.course_id }}-item-parent-course">
+                <a href="/details.course/id/{{ itemcourse.course_id }}" target="_blank" class="btn btn-info" style="color: #000">View Course Info
+                    &nbsp;<i
+                            class="icon icon-external-link"></i></a>
+            </div>
+        </div>
+        <div class="span3">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-item-visibility">Visibility:</label>
+
+                <div class="btn-group visibility-buttons-group" id="{{ itemcourse.course_id }}-item-visibility" style="width: 100%">
+                    <button type="button"
+                            class="btn btn-{% if not itemcourse.hidden %}success selected{% else %}inverse{% endif %}  span6 visibility-buttons"
+                            value="0">Display
+                    </button>
+                    <button type="button"
+                            class="btn btn-{% if itemcourse.hidden %}success selected{% else %}inverse{% endif %} span6 visibility-buttons"
+                            value="1">Hide
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="span6">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-{{ itemid }}-item-change-format">Change Requested Item Format to:</label>
+
+                <div class="btn-group" id="{{ itemcourse.course_id }}-{{ itemid }}-item-change-format" style="width: 100%">
+
+                <span class="span-inverse" id="{{ itemcourse.course_id }}-{{ itemid }}-item-format" value="" data-formatid="{{ info.type_id }}"
+                      data-physformat="{{ info.physical_format }}" style="width: 50%" onclick="void(0); return false;">
+                    {{ attribute(physical_mappings_titles,physical_format) }}
+                </span>
+                    <button class="btn btn-info dropdown-toggle" id="v{{ itemcourse.course_id }}-{{ itemid }}-status-change-indicator-caret"
+                            data-toggle="dropdown" style="width: 8%"><span
+                                class="caret"></span></button>
+                    <ul class="dropdown-menu {{ itemcourse.course_id }}-{{ itemid }}-dropdown-menu format-change-menus" style="width: 234px;">
+                        <li class="divider-header">All Formats</li>
+                        {% for mkey,minttype in physical_mappings %}
+                            <li><a href="javascript: void(0);" class="{{ itemcourse.course_id }}-{{ itemid }}-format-change"
+                                   data-formatid="{{ minttype }}" data-physformat="{{ mkey }}"
+                                   style="text-decoration: none;">{{ attribute(physical_mappings_titles,mkey) }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    <button class="btn btn-info btn-orange" id="{{ itemcourse.course_id }}-{{ itemid }}-item-new-format" value="" style="width: 42%"
+                            onclick="changeItemFormat({{ itemid }},{{ itemcourse.course_id }},document.getElementById('{{ itemcourse.course_id }}-{{ itemid }}-item-format').getAttribute('data-formatid'),document.getElementById('{{ itemcourse.course_id }}-{{ itemid }}-item-format').getAttribute('data-physformat'),{{ itemcourse.item_instance.loanperiod_id }},'{{ puid }}')">
+                        Change Format
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+
+    <!-- status and loan period -->
+    <div class="row-fluid">
+        <div class="span6">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-item-status">Status</label>
+
+                <div class="btn-group" id="menu-{{ itemcourse.course_id }}-btn-group" style="width: 100%">
+                <span class="span-inverse" id="{{ itemcourse.course_id }}-item-status" value="{{ itemcourse.item_instance.status_id }}"
+                      style="width: 90%" onclick="void(0); return false;">{{ itemcourse.item_instance.status }}</span>
+                    <button class="btn btn-info dropdown-toggle" id="v{{ itemcourse.course_id }}-status-change-indicator-caret" data-toggle="dropdown"
+                            value="{{ itemcourse.course_id }}"><span class="caret"></span></button>
+                    <ul class="dropdown-menu {{ itemcourse.course_id }}dropdown-menu status-change-menus" style="width: 396px;">
+                        <li class="divider-header">Status Being Changed</li>
+                        <li><a href="javascript: void(0);" class="{{ itemcourse.course_id }}-status-change"
+                               data-statusid="{{ itemcourse.item_instance.status_id }}"
+                               style="text-decoration: none">{{ itemcourse.item_instance.status }}</a></li>
+                        <li class="divider-header">Possible Next Statuses</li>
+                        {% for k,v in itemcourse.next_statuses %}
+                            <li><a href="javascript: void(0);" class="{{ itemcourse.course_id }}-status-change" data-statusid="{{ k }}"
+                                   style="text-decoration: none">{{ v }}</a></li>
+                        {% endfor %}
+                        <li class="divider-header">All/Other Statuses</li>
+                        {% for k,v in parsed_statuses %}
+                            {% if k not in itemcourse.next_statuses|keys %}
+                                <li><a href="javascript: void(0);" class="{{ itemcourse.course_id }}-status-change"
+                                       data-statusid="{{ k }}" style="text-decoration: none">{{ v.status_name }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}_item-loan-period">Loan Period</label>
+
+                <div class="controls" id="{{ itemcourse.course_id }}_item-loan-period">
+                    {% if itemcourse.item_instance.loanperiod_id == 21 %}
+                        <select class="span12">
+                            <option value="21" selected>N/A</option>
+                        </select>
+                    {% else %}
+                        <select class="span12">
+                            {% for key,value in loanperiods %}
+                                {% if key != 21 %}
+                                    <option value="{{ key }}" {% if itemcourse.item_instance.loanperiod_id == key %} selected {% endif %}>{{ value }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- dates -->
+    <div class="clearfix"></div>
+    <br>
+    <!-- <h1 class="details-section">dates</h1>-->
+
+    <div class="row-fluid expand">
+        <div class="span12">
+            <div class="control-group">
+                <label class="control-label" for="item-requested">Requested Date</label>
+
+                <div class="controls">
+                    <input type="text" id="item-requested"
+                           value='{{ itemcourse.item_instance.request_time|date("Y-m-d") }} {{ itemcourse.item_instance.request_time|date("g:m a") }}'
+                           disabled="true">
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row-fluid expand">
+        <div class="span3">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-course-start-date">Course Start Date</label>
+
+                <div class="controls span12">
+                    <input class="span12" type="text" id="{{ itemcourse.course_id }}-course-start-date"
+                           value='{{ itemcourse.item_instance.dates.course_start|date("Y-m-d") }}' disabled="true">
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-request-start-date">Request Start Date</label>
+
+                <div class="controls span12">
+                    <input class="span12" type="text" id="{{ itemcourse.course_id }}-request-start-date">
+                </div>
+            </div>
+        </div>
+        <div class="span5" style="height: 65px; line-height: 75px;">
+            Cannot be earlier than the start of the course
+        </div>
+    </div>
+
+
+    <div class="row-fluid expand">
+        <div class="span3">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-course-end-date">Course End Date</label>
+
+                <div class="controls span12">
+                    <input class="span12" type="text" id="{{ itemcourse.course_id }}-course-end-date"
+                           value='{{ itemcourse.item_instance.dates.course_end|date("Y-m-d") }}' disabled="true">
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-request-stop-date">Request Stop Date</label>
+
+                <div class="controls span12">
+                    <input class="span12" type="text" id="{{ itemcourse.course_id }}-request-stop-date">
+                </div>
+            </div>
+        </div>
+        <div class="span5" style="height: 65px; line-height: 75px;">
+            Cannot be later than the end of the course
+        </div>
+    </div>
+
+    <!-- location -->
+    <div class="row-fluid expand">
+        <div class="span4">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-item-owning-branch">Owning Branch&nbsp;&nbsp;<i class="icon-info"
+                                                                                                                             title="This can be changed through the course page"></i></label>
+
+                <div class="controls" id="{{ itemcourse.course_id }}-item-owning-branch">
+                    {% for branch in branches %}
+                        {% if itemcourse.course_instance.default_branch_id == branch.branch_id %}
+                            <input type="text" id="{{ itemcourse.course_id }}-item-owning-branch" value="{{ branch.name }}"
+                                   title="The Owning Branch must be changed in the Course View, as it will affect all items for the course."
+                                   disabled="true">
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-item-processing-branch">Processing Branch</label>
+
+                <div class="controls" id="{{ itemcourse.course_id }}-item-processing-branch">
+                    <select class="span12">
+                        {% for branch in branches %}
+                            <option value="{{ branch.branch_id }}" {% if itemcourse.item_instance.processing_branch_id == branch.branch_id %} selected {% endif %}>{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="span4">
+            <div class="control-group">
+                <label class="control-label" for="{{ itemcourse.course_id }}-item-pickup-branch">Pickup Branch</label>
+
+                <div class="controls" id="{{ itemcourse.course_id }}-item-pickup-branch">
+                    <select class="span12">
+                        {% for branch in branches %}
+                            <option value="{{ branch.branch_id }}" {% if itemcourse.item_instance.pickup_branch_id == branch.branch_id %} selected {% endif %}>{{ branch.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if locations %}
+        <div class="row-fluid expand">
+            <div class="span12">
+                <div class="control-group">
+                    <h4>Availability/Shelf Locations</h4>
+                    {% if locations.status == -1 %}
+                        <p>{{ locations.locations }}</p>
+                    {% else %}
+                        {% for location in locations.locations %}
+                            <p>{{ location.status }}: {{ location.location }} ({{ location.callnumber }})</p>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="clearfix"></div>
+    <br>
+    </div>
+
+    <div class="row-fluid expand">
+        <div class="span8" id="{{ itemcourse.course_id }}-pending-changes">
+
+        </div>
+        <div class="span2 offset2">
+            <button class="btn btn-orange btn-right" id="{{ itemcourse.course_id }}-item-save-btn">Save</button>
+        </div>
+    </div>
+
+
+    <script>
+
+    highlightAvailableAccordion({{ itemcourse.item_instance.status_id }}, '#accordian-course-{{ itemcourse.course_id }}');
+
+
+    $('.{{ itemcourse.course_id }}-status-change').on('click', function () {
+        {{ item_suffix|replace({'-':'_'}) }}__status_change = $(this).data("statusid");
+        $('#{{ itemcourse.course_id }}-item-status').val($(this).data("statusid"));
+        $('#{{ itemcourse.course_id }}-item-status').text($(this).text());
+    });
+
+    $('.{{ itemcourse.course_id }}-{{ itemid }}-format-change').on('click', function () {
+        {{ item_suffix|replace({'-':'_'}) }}__status_change = $(this).data("formatid");
+        $('#{{ itemcourse.course_id }}-{{ itemid }}-item-format').val($(this).data("formatid"));
+        document.getElementById('{{ itemcourse.course_id }}-{{ itemid }}-item-format').setAttribute('data-formatid', $(this).data("formatid"));
+        document.getElementById('{{ itemcourse.course_id }}-{{ itemid }}-item-format').setAttribute('data-physformat', $(this).data("physformat"));
+
+        $('#{{ itemcourse.course_id }}-{{ itemid }}-item-format').text($(this).text());
+    });
+
+    /* Dates */
+    {
+        //first prep datepicker with course limits, then after set default value to course_item field
+        var querySDate = $('#{{ itemcourse.course_id }}-course-start-date').val();
+        var queryEDate = $('#{{ itemcourse.course_id }}-course-end-date').val();
+        var dateParts = querySDate.match(/(\d+)/g);
+        var realDateS = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        dateParts = queryEDate.match(/(\d+)/g);
+        var realDateE = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+        $('#{{ itemcourse.course_id }}-request-start-date').datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: new Date(realDateS),
+            maxDate: new Date(realDateE)
+        });
+
+        $('#{{ itemcourse.course_id }}-request-stop-date').datepicker({
+            dateFormat: 'yy-mm-dd',
+            minDate: new Date(realDateS),
+            maxDate: new Date(realDateE)
+        });
+
+        querySDate = '{{ itemcourse.item_instance.dates.course_item_start|date("Y-m-d") }}';
+        queryEDate = '{{ itemcourse.item_instance.dates.course_item_end|date("Y-m-d") }}';
+        dateParts = querySDate.match(/(\d+)/g);
+        realDateS = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+        dateParts = queryEDate.match(/(\d+)/g);
+        realDateE = new Date(dateParts[0], dateParts[1] - 1, dateParts[2]);
+
+        $('#{{ itemcourse.course_id }}-request-start-date').datepicker("setDate", realDateS);
+        $('#{{ itemcourse.course_id }}-request-stop-date').datepicker("setDate", realDateE);
+    }
+
+
+    $('#request-details-section-{{ itemcourse.course_id }} .visibility-buttons').on('click', function () {
+        /* Init Buttons */
+        $('#request-details-section-{{ itemcourse.course_id }} .visibility-buttons-group .btn').each(function () {
+            $(this).removeClass('btn-success').removeClass('selected').addClass('btn-inverse');
+        });
+
+        //set value ui
+        $(this).removeClass('btn-inverse').addClass('btn-success').addClass('selected');
+        // repaint
+        $(document.body).addClass('dummyClass').removeClass('dummyClass');
+        log('Hidden is now ' + $('#request-details-section-{{ itemcourse.course_id }} .visibility-buttons-group').find('.btn-success.selected').val());
+    });
+
+    $(document).ready(function () {
+        $('#{{ itemcourse.course_id }}-item-owning-branch').qtip();
+    });
+    $('#{{ itemcourse.course_id }}-item-owning-branch').bind("hover", function () {
+        $(this).qtip('toggle', true);
+    });
+
+
+    //variables to test against and update if any are changed
+    var v{{ itemcourse.course_id }}_itemid = {{ itemid }};
+    var v{{ itemcourse.course_id }}_courseid = {{ itemcourse.course_id }};
+
+    var v{{ itemcourse.course_id }}_originalstart = $('#{{ itemcourse.course_id }}-request-start-date').val(); //reads and wrties
+    var v{{ itemcourse.course_id }}_originalend = $("#{{ itemcourse.course_id }}-request-stop-date").val(); // reads and writes
+
+    var v{{ itemcourse.course_id }}_originalstartoffset = $('#{{ itemcourse.course_id }}-item-request-available-type option:selected').val(); //reads and writes
+    var v{{ itemcourse.course_id }}_originalendoffset = $("#{{ itemcourse.course_id }}-item-request-unavailable-type option:selected").val(); //reads and writes
+
+    //var v{{ itemcourse.course_id }}_originalstatus          = $('#{{ itemcourse.course_id }}-item-status option:selected').val(); //reads and writes
+    var v{{ itemcourse.course_id }}_originalstatus = $('#{{ itemcourse.course_id }}-item-status').val(); //reads and writes
+    var v{{ itemcourse.course_id }}_original_loanperiod = {{ itemcourse.item_instance.loanperiod_id}}; //not implemented
+    var v{{ itemcourse.course_id }}_original_visibility = {{ itemcourse.item_instance.hidden }}; // reads and writes
+    var v{{ itemcourse.course_id }}_original_format = $('#{{ itemcourse.course_id }}-item-status option:selected').val(); // not implemented
+    var v{{ itemcourse.course_id }}_original_uri = $('#{{ itemcourse.course_id }}-uri').val(); // not implemented
+
+    var v{{ itemcourse.course_id }}_item_processing_branch = $('#{{ itemcourse.course_id }}-item-processing-branch option:selected').val(); //not pushed
+    var v{{ itemcourse.course_id }}_item_pickup_pranch = $('#{{ itemcourse.course_id }}-item-pickup-branch option:selected').val(); // not pushed
+
+
+    //related to saving and feedback
+    var v{{ itemcourse.course_id }}_statusmessage = '';
+    var v{{ itemcourse.course_id }}_error = false;
+    var v{{ itemcourse.course_id }}_saved = false;
+    var v{{ itemcourse.course_id }}_verbose = false;
+
+
+    $('#{{ itemcourse.course_id }}-item-save-btn').on('click', function () {
+
+
+        //change the status
+        //if ($('#{{ itemcourse.course_id }}-item-status option:selected').val() != v{{ itemcourse.course_id }}_originalstatus) {
+
+        if ($('#{{ itemcourse.course_id }}-item-status').val() != v{{ itemcourse.course_id }}_originalstatus) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "{{base_url}}/details.set_ci_status",
+                data: { i: v{{ itemcourse.course_id }}_itemid, c: v{{ itemcourse.course_id }}_courseid, s: $('#{{ itemcourse.course_id }}-item-status').val()},
+                dataType: 'json'
+            })
+                    .done(function (data) {
+                        if (data.success) {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat("Status was saved successfully.");
+                            v{{ itemcourse.course_id }}_saved = true;
+                        }
+                        else {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Error saving status: " + data.message);
+                            v{{ itemcourse.course_id }}_error = true;
+                        }
+                        log(v{{ itemcourse.course_id }}_statusmessage);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Fatal Error: Could not connect to server to save dates");
+                        v{{ itemcourse.course_id }}_error = true;
+                    });
+        }
+        else {
+            if (v{{ itemcourse.course_id }}_verbose) {
+                v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat("Status [no change].");
+            }
+        }
+
+
+        //change the visibility
+        if ($('#request-details-section-{{ itemcourse.course_id }} .visibility-buttons-group').find('.btn-success.selected').val() != v{{ itemcourse.course_id }}_original_visibility) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "{{base_url}}/update.cifield",
+                data: {
+                    i: v{{ itemcourse.course_id }}_itemid,
+                    c: v{{ itemcourse.course_id }}_courseid,
+                    v: $('.visibility-buttons-group').find('.btn-success.selected').val(),
+                    f: "hidden"
+                },
+                dataType: 'json'
+            })
+                    .done(function (data) {
+                        if (data.success) {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Visibility was saved successfully.");
+                            v{{ itemcourse.course_id }}_saved = true;
+                        }
+                        else {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Error saving status: " + data.message);
+                            v{{ itemcourse.course_id }}_error = true;
+                        }
+                        log(v{{ itemcourse.course_id }}_statusmessage);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Fatal Error: Could not connect to server to save visibility");
+                        v{{ itemcourse.course_id }}_error = true;
+                    });
+        }
+        else {
+            if (v{{ itemcourse.course_id }}_verbose) {
+                v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Visibility [no change].");
+            }
+
+        }
+
+
+        {% if itemcourse.item_instance.loanperiod_id != 21 %}
+        //change the loanperiod
+        if ($("#{{ itemcourse.course_id }}_item-loan-period option:selected").val() != v{{ itemcourse.course_id }}_original_loanperiod) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "{{base_url}}/update.ciloanperiod",
+                data: {
+                    i: v{{ itemcourse.course_id }}_itemid,
+                    c: v{{ itemcourse.course_id }}_courseid,
+                    v: $("#{{ itemcourse.course_id }}_item-loan-period option:selected").val()
+                },
+                dataType: 'json'
+            })
+                    .done(function (data) {
+                        if (data.success) {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Loan Period saved. Status updated.");
+                            v{{ itemcourse.course_id }}_saved = true;
+                        }
+                        else {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Error saving status: " + data.message);
+                            v{{ itemcourse.course_id }}_error = true;
+                        }
+                        log(v{{ itemcourse.course_id }}_statusmessage);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Fatal Error: Could not connect to server to save dates");
+                        v{{ itemcourse.course_id }}_error = true;
+                    });
+        }
+        else {
+            if (v{{ itemcourse.course_id }}_verbose) {
+                v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Loan Period [no change].");
+            }
+        }
+        {% endif %}
+
+
+        var start = $('#{{ itemcourse.course_id }}-request-start-date').val();
+        var end = $("#{{ itemcourse.course_id }}-request-stop-date").val();
+
+        if (start == '') {
+            start = $('#{{ itemcourse.course_id }}-course-start-date').val();
+        }
+        if (end == '') {
+            end = $('#{{ itemcourse.course_id }}-course-end-date').val();
+        }
+
+        if (start != v{{ itemcourse.course_id }}_originalstart || end != v{{ itemcourse.course_id }}_originalend) {
+
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "{{base_url}}/update.cidates",
+                data: { i: v{{ itemcourse.course_id }}_itemid, c: v{{ itemcourse.course_id }}_courseid, s: start, e: end, type_id: {{ info.type_id }} },
+                dataType: 'json'
+            })
+                    .done(function (data) {
+                        if (data.success) {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Dates were saved successfully.");
+                            v{{ itemcourse.course_id }}_saved = true;
+                        }
+                        else {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat("Error saving dates: " + data.message);
+                            v{{ itemcourse.course_id }}_error = true;
+                        }
+                        log(v{{ itemcourse.course_id }}_statusmessage);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat("Fatal Error: Could not connect to server to save dates");
+                        v{{ itemcourse.course_id }}_error = true;
+                    });
+        }
+        else {
+            if (v{{ itemcourse.course_id }}_verbose) {
+                v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Dates [no change].");
+            }
+        }
+
+
+        //change the processing branch
+        if ($('#{{ itemcourse.course_id }}-item-processing-branch option:selected').val() != v{{ itemcourse.course_id }}_item_processing_branch) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "{{base_url}}/update.ciprocessingbranch",
+                data: {
+                    i: v{{ itemcourse.course_id }}_itemid,
+                    c: v{{ itemcourse.course_id }}_courseid,
+                    v: $('#{{ itemcourse.course_id }}-item-processing-branch option:selected').val()
+                },
+                dataType: 'json'
+            })
+                    .done(function (data) {
+                        if (data.success) {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Processing Branch saved.");
+                            v{{ itemcourse.course_id }}_saved = true;
+                        }
+                        else {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Error saving status: " + data.message);
+                            v{{ itemcourse.course_id }}_error = true;
+                        }
+                        log(v{{ itemcourse.course_id }}_statusmessage);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Fatal Error: Could not connect to server to save dates");
+                        v{{ itemcourse.course_id }}_error = true;
+                    });
+        }
+        else {
+            if (v{{ itemcourse.course_id }}_verbose) {
+                v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Processing Branch: [no change].");
+            }
+        }
+
+
+        //change the pickup branch
+        if ($('#{{ itemcourse.course_id }}-item-pickup-branch option:selected').val() != v{{ itemcourse.course_id }}_item_pickup_pranch) {
+            $.ajax({
+                type: "POST",
+                async: false,
+                url: "{{base_url}}/update.cipickupbranch",
+                data: {
+                    i: v{{ itemcourse.course_id }}_itemid,
+                    c: v{{ itemcourse.course_id }}_courseid,
+                    v: $('#{{ itemcourse.course_id }}-item-pickup-branch option:selected').val()
+                },
+                dataType: 'json'
+            })
+                    .done(function (data) {
+                        if (data.success) {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Pickup Branch saved.");
+                            v{{ itemcourse.course_id }}_saved = true;
+                        }
+                        else {
+                            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Error saving status: " + data.message);
+                            v{{ itemcourse.course_id }}_error = true;
+                        }
+                        log(v{{ itemcourse.course_id }}_statusmessage);
+                    })
+                    .fail(function (jqXHR, textStatus) {
+                        v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Fatal Error: Could not connect to server to save dates");
+                        v{{ itemcourse.course_id }}_error = true;
+                    });
+        }
+        else {
+            if (v{{ itemcourse.course_id }}_verbose) {
+                v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Pickup Branch: [no change].");
+            }
+        }
+
+
+        //log(v{{ itemid }}_statusmessage);
+        if (v{{ itemcourse.course_id }}_saved) {
+            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Reloading page...");
+            (function () {
+                setTimeout(function () {
+                    $('#status-msgs-close-menu').trigger('click');
+                }, 2000)
+            })();
+        }
+        else {
+            v{{ itemcourse.course_id }}_statusmessage = v{{ itemcourse.course_id }}_statusmessage.concat(" Nothing was changed...");
+        }
+
+        //$('#add-status').html(v{{ itemcourse.course_id }}_statusmessage);
+        if (v{{ itemcourse.course_id }}_saved) {
+            notify(v{{ itemcourse.course_id }}_statusmessage, 'success', true, true, false);
+        }
+        else if (v{{ itemcourse.course_id }}_error) {
+            //$('#status-msgs').css('border-bottom-color','red');
+            notify(v{{ itemcourse.course_id }}_statusmessage, 'danger', true, false, false);
+            v{{ itemcourse.course_id }}_statusmessage = '';
+        }
+        else {
+            //$('#status-msgs').css('border-bottom-color','green');
+            notify(v{{ itemcourse.course_id }}_statusmessage, 'warning', true, false, false);
+            v{{ itemcourse.course_id }}_statusmessage = '';
+        }
+
+
+        /*$('#status-msgs-close-menu').on('click', function(){
+         $('#status-msgs').css('top','0px').css('border-bottom-color','#F7C273');
+         $('#main').css('opacity','1');
+         if(v
+        {{ itemcourse.course_id }}_saved){
+         window.location.reload();}
+         });*/
+
+
+        return false;
+    });
+    </script>
+
+
+    <!-- ======================= Instructor Support ================  -->
+    <div class="clearfix"></div>
+    <br>
+
+    <h1 class="details-section inner">instructor support</h1>
+
+    <div class="row-fluid alert" style="padding: 10px; margin: auto -10px;">
+        <h5>Notes for Processing Staff</h5>
+
+        <div class="span12">
+            <div class="row-fluid">
+                <div class="span12">
+                    {% for key,notecontainer in itemcourse.notes_staff|reverse(true) %}
+                        {% for note in notecontainer %}
+                            <p class="note-p note-internal" id="note-{{ note.note_id }}"><span class="note-content">{{ note.content }}</span><br>
+                                - <span class="note-author">{{ note.firstname }} {{ note.lastname }}</span>, <span
+                                        class="note-date">{{ note.timestamp|date("Y-m-d") }} {{ note.timestamp|date("g:i a") }}</span>
+                                <!-- <a href="#" data-note-edit-id="{{ note.note_id }}" title="Edit Note"><i class="icon-edit"></i></a> --></p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="row-fluid">
+                <div class="span12">
+                    <textarea style="width: 98%" rows="5" id="{{ itemid }}-{{ itemcourse.course_id }}-staff-note"
+                              placeholder="Enter note here"></textarea><br>
+                    <button class="btn btn-inverse btn-orange btn-right"
+                            onclick="addNote({{ itemid }},{{ itemcourse.course_id }},'Library Staff,Administrator','staff','{{ puid }}')">Add Staff
+                        Note
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr class="section">
+    <h5>Note to Instructor(s)</h5>
+    {% if itemcourse.notes_instructor %}
+        <div class="row-fluid">
+            <div class="span12">
+                {% for key,notecontainer in itemcourse.notes_instructor|reverse(true) %}
+                    {% for note in notecontainer %}
+                        <p class="note-p" id="note-{{ note.note_id }}"><span class="note-content">{{ note.content }}</span><br>
+                            - <span class="note-author">{{ note.firstname }} {{ note.lastname }}</span>, <span
+                                    class="note-date">{{ note.timestamp|date("Y-m-d") }} {{ note.timestamp|date("g:i a") }}</span>
+                            <!-- <a href="#" data-note-edit-id="{{ note.note_id }}" title="Edit Note"><i class="icon-edit"></i></a>--></p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <div class="row-fluid">
+        <div class="span12">
+            <textarea style="width: 98%" rows="5" id="{{ itemid }}-{{ itemcourse.course_id }}-instructor-note"
+                      placeholder="Enter note here"></textarea><br>
+            <button class="btn btn-inverse btn-orange btn-right"
+                    onclick="addNote({{ itemid }},{{ itemcourse.course_id }},'Instructor,TA', 'instructor','{{ puid }}')">Add
+                Instructor Note
+            </button>
+        </div>
+    </div>
+
+    <hr class="section">
+
+    <h5>Note to Students</h5>
+    {% if itemcourse.notes_students %}
+        <div class="row-fluid">
+            <div class="span12">
+                {% for key,notecontainer in itemcourse.notes_students|reverse(true) %}
+                    {% for note in notecontainer %}
+                        <p class="note-p" id="note-{{ note.note_id }}"><span class="note-content">{{ note.content }}</span><br>
+                            - <span class="note-author">{{ note.firstname }} {{ note.lastname }}</span>, <span
+                                    class="note-date">{{ note.timestamp|date("Y-m-d") }} {{ note.timestamp|date("g:i a") }}</span>
+                            <!-- <a href="#" data-note-edit-id="{{ note.note_id }}" title="Edit Note"><i class="icon-edit"></i></a> --></p>
+                        <hr>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <div class="row-fluid">
+        <div class="span12">
+            <textarea style="width: 98%" rows="5" id="{{ itemid }}-{{ itemcourse.course_id }}-student-note"
+                      placeholder="Enter note here"></textarea><br>
+            <button class="btn btn-inverse btn-orange btn-right"
+                    onclick="addNote({{ itemid }},{{ itemcourse.course_id }},'Student','student','{{ puid }}')">Add Student Note
+            </button>
+        </div>
+    </div>
+
+
+    <div class="clearfix"></div>
+    <br>
+
+    {% if itemcourse.history %}
+        <div class="row-fluid expand">
+            <div class="span12">
+                <h4>Course Item History</h4>
+                {% for entry in itemcourse.history %}
+                    <p><strong>{{ entry.time }}: </strong>{{ entry.note }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+    <!-- ======================= Accordian Content Ends Here ============================== -->
+    </div>
+    </div>
+    </div>
+    </div>
+{% endif %}

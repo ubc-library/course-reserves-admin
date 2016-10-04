@@ -1,0 +1,24 @@
+<form class="form-horizontal" action="/login.authenticate" method="post">
+  <legend>Log in to {{app_display_name}}</legend>
+{% if method == 'ldap' %}
+  <div class="control-group">
+    <label class="control-label" for="user">User name</label>
+    <div class="controls">
+      <input type="text" id="user" name="user" placeholder="User name">
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="pass">Password</label>
+    <div class="controls">
+      <input type="password" id="pass" name="pass" placeholder="Password">
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <input type="submit" class="btn" value="Sign in" />
+    </div>
+  </div>
+{% else %}
+  <div class="cwl_login_link">{{cwl_button|raw}}</div>
+{% endif %}
+</form>

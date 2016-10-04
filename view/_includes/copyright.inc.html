@@ -1,0 +1,711 @@
+<br>
+{% if itemcourses|length > 1 %}
+    <!-- we should only ever have a one-to-one mapping for PDF Items -->
+    <div class="row-fluid" id="no-pdf-alert">
+        <div class="span12">
+            <div class="alert alert-danger">
+                <strong>There may be multiple course requests on this PDF. Please ensure the record is correct.</strong>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% for course in itemcourses %}
+    {% if course.item_instance.status_id not in [500,8] %}
+        <div class="row-fluid" id="no-pdf-alert" style="display: none;">
+            <div class="span12">
+                <div class="alert alert-danger">
+                    <strong>No PDF has been uploaded into DocStore as yet for this item.</strong>
+                </div>
+            </div>
+        </div><!-- /.row-fluid -->
+        <div class="row-fluid">
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-page-count">Page Count</label>
+
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-page-count" name="page-count"
+                           value="{{ copyrightDetails.page_count }}" onkeydown="updatePercentage()" class="span9"/>
+                    <span class="add-on">pages</span>
+                </div>
+            </div>
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-entire-work">Entire Work</label>
+
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-entire-work" name="entire-work"
+                           value="{{ copyrightDetails.work_count }}" onkeydown="updatePercentage()" class="span9"/>
+                    <span class="add-on">pages</span>
+                </div>
+            </div>
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-percentage-work">Percentage of Work</label>
+
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-percentage-work" name="percentage-work" value="" class="span9"
+                           readonly/>
+                    <span class="add-on">%</span>
+                </div>
+            </div>
+
+            <div class="span3">
+                <label class="control-label" for="pdf-submit">&nbsp;</label>
+                <button class="btn btn-info" id="pdf-submit" style="float: right; width: 100%">Upload/Replace PDF</button>
+            </div>
+        </div><!-- /.row-fluid -->
+
+        <!-- the purchasing fields -->
+        <div class="row-fluid">
+            <div class="span12">
+                <hr/>
+            </div>
+        </div>
+
+
+        <div class="row-fluid">
+            <!-- Total Work Cost -->
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-work-cost">Total Cost</label>
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-work-cost" name="copyright-determination-work-cost"
+                           value="{{ copyrightDetails.cost }}" class="span9"/>
+                    <span class="add-on">$.xx</span>
+                </div>
+            </div>
+
+            <!-- Total Amount of Cost that has been paid to date -->
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-amount-paid">Total Paid</label>
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-amount-paid" name="copyright-determination-amount-paid"
+                           value="{{ copyrightDetails.paid_amount }}" class="span9"/>
+                    <span class="add-on">$.xx</span>
+                </div>
+            </div>
+
+            <!-- The currency of the transaction -->
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-purchase-currency">Purchase Currency (XYZ) <a
+                            href="http://www.easy-forex.com/eu/currencyacronyms/" target="_blank"><i class="icon icon-external-link"></i></a></label>
+                <div class="input-append">
+                    <input type="text" placeholder="CAD, USD, EUR" id="copyright-determination-purchase-currency"
+                           name="copyright-determination-purchase-currency"
+                           value="{{ copyrightDetails.currency }}" onkeyup="updatePurchaseCurrency()" class="span9"/>
+                    <span class="add-on">ISO</span>
+                </div>
+            </div>
+
+            <!-- the exchange rate, 1 CAD = abc currency -->
+            <div class="span3">
+                <label class="control-label" for="copyright-determination-exchange-rate">Exchange Rate | $1 CAD =</label>
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-exchange-rate" name="copyright-determination-exchange-rate"
+                           value="{{ copyrightDetails.exchange_rate }}" class="span9"/>
+                    <span class="add-on" id="copyright-determination-purchase-currency-acronym"></span>
+                </div>
+            </div>
+        </div>
+        <!-- /.row-fluid -->
+
+
+        <!-- the rightsholder fields -->
+        <div class="row-fluid">
+            <div class="span12">
+                <hr/>
+            </div>
+        </div>
+
+        <div class="row-fluid">
+            <!-- Total Work Cost -->
+            <div class="span6">
+                <label class="control-label" for="copyright-determination-rightsholder">Rightsholder</label>
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-rightsholder" name="copyright-determination-rightsholder"
+                           value="{{ copyrightDetails.rightsholder }}" class="span12"/>
+                </div>
+            </div>
+
+            <!-- Total Amount of Cost that has been paid to date -->
+            <div class="span4">
+                <label class="control-label" for="copyright-determination-license-link">License URI</label>
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-license-link" name="copyright-determination-license-link"
+                           value="{{ copyrightDetails.rights_uri }}"  class="span12"/>
+                </div>
+            </div>
+
+            <!-- Total Amount of Cost that has been paid to date -->
+            <div class="span2">
+                <label class="control-label" for="copyright-determination-paid-date">Paid Date</label>
+                <div class="input-append">
+                    <input type="text" placeholder="n/a" id="copyright-determination-paid-date" name="copyright-determination-paid-date"
+                           value="{{ copyrightDetails.paid_date }}" class="span12"/>
+                </div>
+            </div>
+        </div>
+        <!-- /.row-fluid -->
+
+
+        <script>
+
+            $(function () {
+                $("#copyright-determination-paid-date").datepicker();
+            });
+
+            /*
+             setInterval(function (){
+             document.getElementById("copyright-determination-purchase-currency-acronym").innerHTML = document.getElementById("copyright-determination-purchase-currency").value;
+             }, 125);
+             */
+
+            function updatePurchaseCurrency() {
+                setTimeout(function () {
+                    document.getElementById("copyright-determination-purchase-currency-acronym").innerHTML = document.getElementById("copyright-determination-purchase-currency").value;
+                }, 500);
+            }
+        </script>
+
+        <div class="row-fluid">
+            <div class="span12">
+                <hr/>
+            </div>
+        </div>
+
+        <!-- Copyright Determination -->
+        <div class="row-fluid">
+            <div class="span12">
+                <h4>Copyright Determination</h4>
+                <div class="btn-group" data-toggle="buttons-radio" id="copyright-determination-group">
+                    {% for k,v in copyrightTypes %}
+                        <button type="button" class="btn btn-info copyright-buttons" id="copyright-status-{{ k }}" value="{{ k }}"
+                                name="copyright">{{ v }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div><!-- /.row-fluid -->
+
+        <!-- Copyright Coversheet -->
+        <div class="clearfix"><br></div>
+        <div class="row-fluid">
+            <div class="span12">
+                <label class="control-label" for="copyright-determination-coversheet">Additional Copyright Information For Coversheet</label>
+                <textarea rows="4" class="span12" placeholder="n/a" id="copyright-determination-coversheet"
+                          name="coversheet-notes">{{ copyrightAddendaCS }}</textarea>
+            </div>
+        </div><!-- /.row-fluid -->
+        <div class="clearfix"></div>
+
+        <!-- Copyright Notes -->
+        <div class="row-fluid expand">
+            <div class="span12">
+                <h4>Copyright Notes</h4>
+                {% for note in copyrightNotes %}
+                    <div class="row-fluid">
+                        <div class="span6">
+                            <strong>{{ note.user_lname }}, {{ note.user_fname }} @ {{ note.timestring }}</strong>
+                        </div>
+                        <div class="span6"><!-- empty --></div>
+                    </div><!-- /.row-fluid -->
+                    {% if note.isEditable %}
+                        <textarea rows="4" class="span12" placeholder="n/a" id="copyright-determination-notes-note-id-{{ note.note_id }}"
+                                  name="coversheet-notes-note-id-{{ note.note_id }}" {{ note.isEditable ? '' : 'disabled' }} style="white-space: pre-wrap">{{ note.note|trim('"') }}</textarea>
+                        <div class="row-fluid">
+                            <div class="span12">
+                                <input type="button" id="copyright-details-save-note-id-{{ note.note_id }}" name="copyright-details-notes-note-id-{{ note.note_id }}" value="Update Note"
+                                       onclick="updateCopyrightNote('{{ note.note_id }}'); void(0); return false;" class="btn btn-info" style="float: right"/>
+                            </div>
+                        </div><!-- /.row-fluid -->
+                    {% else %}
+                        <p style="border-bottom: 1px solid #cccccc;">
+                            {{ note.note|trim('"')|replace({"\\n":"<br/>"})|replace({"\n":"<br/>"})|raw }}
+                        </p>
+                    {% endif %}
+                {% endfor %}
+                <div class="clearfix"></div>
+                <label class="control-label" for="copyright-determination-notes">Add to Copyright Notes</label>
+                <textarea rows="2" class="span12" placeholder="n/a" id="copyright-determination-notes" name="copyright-notes"></textarea>
+            </div>
+        </div><!-- /.row-fluid -->
+
+        <div class="row-fluid">
+            <div class="span12">
+                <input type="button" id="copyright-details-save" name="copyright-details-notes" value="Save Changes"
+                       onclick="saveCopyrightChanges(); void(0)" class="btn btn-info" style="float: right"/>
+            </div>
+        </div><!-- /.row-fluid -->
+        <div id="docstore-upload-file-modal" class="reveal-modal large">
+            <h4>Select File</h4><br>
+            <div class="row-fluid">
+                <div class="span12">
+                    <div class="input-prepend"><span class="add-on span2">File Upload</span>
+                        <input class="span10 stored" type="file" id="ubc_id_uploadfile" name="uploadfile" value="" placeholder="Select file to upload..."></div>
+                </div>
+            </div>
+            <button class="btn" id="docstore-upload-file-submit-btn">Save Changes</button>
+            <span id="docstore-upload-file-success"></span>
+            <a class="close-reveal-modal">&#215;</a>
+        </div>
+        <script>
+            //$('#copyright-determination-coversheet').text('hello');
+            /* '{{ copyrightAddendaCS|nl2br }}'); */
+            work_count = $('#copyright-determination-entire-work').val();
+            page_count = $('#copyright-determination-page-count').val();
+
+            var __initialValues = {
+                cost: $('#copyright-determination-work-cost').val(),
+                currency: $('#copyright-determination-purchase-currency').val(),
+                paid_amount: $('#copyright-determination-amount-paid').val(),
+                paid_date: $('#copyright-determination-paid-date').val(),
+                exchange_rate: $('#copyright-determination-exchange-rate').val(),
+                rightsholder: $('#copyright-determination-rightsholder').val(),
+                license_link: $('#copyright-determination-license-link').val()
+            };
+
+
+            coversheet_note = $('#copyright-determination-coversheet').val();
+
+            updatePurchaseCurrency();
+
+            copy_status = {{ copyrightStatus }};
+            o_copy_status = {{ copyrightStatus }};
+            _item_id = {{ itemid }};
+
+            function checkStatus() {
+
+                var _message = '';
+                var _do_reload = false;
+
+                if (copy_status != o_copy_status) {
+                    var fd = new FormData();
+                    fd.append("actionlabel", 'docstore-submission');
+                    fd.append('initiator', 'client');
+                    fd.append('status', copy_status);
+                    fd.append('item_id', _item_id);
+                    fd.append('course_id', '{{ course.course_id }}');
+
+                    $.ajax({
+                        url: "{{ base_url }}/docstore.updateStatus",
+                        type: "POST",
+                        data: fd,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        async: false,
+                        dataType: 'json'
+                    }).done(function (data) {
+                        if (data.success) {
+                            _message = 'Status Changed\n';
+                        } else {
+                            _message = 'Failed to update status. Check logs.\n';
+                        }
+                        _do_reload = true;
+                    }).fail(function () {
+                        _message = 'Failed to connect to update status. Check logs.\n';
+
+                    }).always(function () {
+                    });
+                }
+                return {message: _message, reload: _do_reload, done: true};
+            }
+
+
+            function checkDetails() {
+
+                var _message = '';
+
+                var _do_reload = false;
+
+                if (
+                        work_count != $('#copyright-determination-entire-work').val() ||
+                        page_count != $('#copyright-determination-page-count').val() ||
+                        __initialValues.cost != $('#copyright-determination-work-cost').val() ||
+                        __initialValues.currency != $('#copyright-determination-purchase-currency').val() ||
+                        __initialValues.exchange_rate != $('#copyright-determination-exchange-rate').val() ||
+                        __initialValues.paid_amount != $('#copyright-determination-amount-paid').val() ||
+                        __initialValues.paid_date != $('#copyright-determination-paid-date').val() ||
+                        __initialValues.rightsholder != $('#copyright-determination-rightsholder').val() ||
+                        __initialValues.license_link != $('#copyright-determination-license-link').val()
+                ) {
+
+                    var changedFields = '';
+
+                    if (work_count != $('#copyright-determination-entire-work').val()) {
+                        changedFields += 'UPDATED: Number of Pages in "Entire Work"\n';
+                    }
+
+                    if (page_count != $('#copyright-determination-page-count').val()) {
+                        changedFields += 'UPDATED: Number of Pages in "Copyright Copy"\n';
+                    }
+
+                    if (__initialValues.cost != $('#copyright-determination-work-cost').val()) {
+                        changedFields += 'UPDATED: Total Cost of Work Item\n';
+                    }
+
+                    if (__initialValues.currency != $('#copyright-determination-purchase-currency').val()) {
+                        changedFields += 'UPDATED: Purchase Currency\n';
+                    }
+
+                    if (__initialValues.exchange_rate != $('#copyright-determination-exchange-rate').val()) {
+                        changedFields += 'UPDATED: Exchange Rate\n';
+                    }
+
+                    if (__initialValues.paid_amount != $('#copyright-determination-amount-paid').val()) {
+                        changedFields += 'UPDATED: Total Paid by UBC (thus far)\n';
+                    }
+
+                    if (__initialValues.paid_date != $('#copyright-determination-paid-date').val()){
+                        changedFields += 'UPDATED: Date of Payment by UBC\n';
+                    }
+
+                    if (__initialValues.rightsholder != $('#copyright-determination-rightsholder').val()){
+                        changedFields += 'UPDATED: Rightsholder"\n';
+                    }
+                    if (__initialValues.license_link != $('#copyright-determination-license-link').val()){
+                        changedFields += 'UPDATED: License URI\n';
+                    }
+
+                    console.log(changedFields);
+
+
+                    var fd = new FormData();
+                    fd.append("actionlabel", 'docstore-submission');
+                    fd.append('initiator', 'client');
+
+                    fd.append('work_count', $('#copyright-determination-entire-work').val());
+                    fd.append('page_count', $('#copyright-determination-page-count').val());
+
+                    fd.append('cost', $('#copyright-determination-work-cost').val());
+                    fd.append('currency', $('#copyright-determination-purchase-currency').val());
+
+                    fd.append('paid_amount', $('#copyright-determination-amount-paid').val());
+                    fd.append('paid_date', $('#copyright-determination-paid-date').val());
+
+                    fd.append('exchange_rate', $('#copyright-determination-exchange-rate').val());
+
+                    fd.append('rightsholder', $('#copyright-determination-rightsholder').val());
+                    fd.append('rights_uri', $('#copyright-determination-license-link').val());
+
+                    fd.append('item_id', _item_id);
+
+                    console.log(fd);
+
+                    $.ajax({
+                        url: "{{ base_url }}/docstore.upsertDetails",
+                        type: "POST",
+                        data: fd,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        async: false,
+                        dataType: 'json'
+                    }).done(function (data) {
+                        if (data.success) {
+                            _message = changedFields;
+                        } else {
+                            _message = 'Connected to API but Failed to Update Copyright Details';
+                        }
+                        _do_reload = true;
+                    }).fail(function () {
+                        _message = 'Failed to connect update page range. Check logs.\n';
+                    }).always(function () {
+                    });
+                }
+
+                return {message: _message, reload: _do_reload, done: true};
+            }
+
+
+            function checkCover() {
+
+                var _message = '';
+                var _do_reload = false;
+
+
+                if (($('#copyright-determination-coversheet').val()).trim() != coversheet_note) {
+
+                    var csfd = new FormData();
+                    csfd.append('actionlabel', 'docstore-submission');
+                    csfd.append('initiator', 'client');
+                    csfd.append('c', JSON.stringify(($('#copyright-determination-coversheet').val()).trim()));
+                    csfd.append('a', 1);
+                    csfd.append('i', _item_id);
+
+                    $.ajax({
+                        url: "/docstore.updateNote",
+                        type: "POST",
+                        data: csfd,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        async: false,
+                        dataType: 'json'
+                    }).done(function (data) {
+                        if (data.success) {
+                            _message = _message + 'Coversheet Notes Changed (DocStore Copy)\n';
+                        } else {
+                            _message = _message + 'Failed to update Coversheet. Check logs.\n';
+                        }
+                        _do_reload = true;
+                    }).fail(function () {
+                        _message = _message + 'Failed docstore.updateNote coversheet\n';
+                    }).always(function () {
+                    });
+                }
+
+                return {message: _message, reload: _do_reload, done: true};
+            }
+
+
+            function updateCopyrightNote(noteid) {
+                var _message = '';
+                var _do_reload = false;
+                if (($('#copyright-determination-notes-note-id-' + noteid).val()).trim().length > 0) {
+
+                    var fd = new FormData();
+                    fd.append('initiator', 'client');
+                    fd.append('c', JSON.stringify($('#copyright-determination-notes-note-id-' + noteid).val()));
+                    fd.append('i', _item_id);
+                    fd.append('a', 0);
+                    fd.append('noteid', noteid);
+
+                    $.ajax({
+                        url: "{{ base_url }}/docstore.updateNote",
+                        type: "POST",
+                        data: fd,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        async: false
+                    }).done(function (data) {
+                        console.log(data);
+                        if (data.success) {
+                            _message = _message + 'Copyright Notes Changed (DocStore Copy)\n';
+                            _message = _message + 'Reloading Page';
+                            alert(_message);
+                            location.reload();
+                        }
+                        else {
+                            _message = _message + 'Failed to update Copyright Notes. Check logs.\n';
+                            _message = _message + ' | Nothing has been changed!';
+                            alert(_message);
+                        }
+                    }).fail(function () {
+                        _message = _message + 'Failed docstore.updateNote addenda\n';
+                        _message = _message + ' | Nothing has been changed!';
+                        alert(_message);
+                    }).always(function () {
+                    });
+                }
+
+                return false;
+            }
+
+            function checkNote() {
+
+                var _message = '';
+                var _do_reload = false;
+
+                if (($('#copyright-determination-notes').val()).trim().length > 0) {
+
+                    var fd = new FormData();
+                    fd.append("actionlabel", 'docstore-submission');
+                    fd.append('initiator', 'client');
+                    fd.append('c', JSON.stringify(($('#copyright-determination-notes').val()).trim()));
+                    fd.append('i', _item_id);
+                    fd.append('r', JSON.stringify(7));
+                    fd.append('a', 0);
+                    fd.append('cid', '{{ course.course_id }}');
+
+                    $.ajax({
+                        url: "/update.courseitemnote",
+                        type: "POST",
+                        data: fd,
+                        cache: false,
+                        processData: false,
+                        contentType: false,
+                        dataType: 'json',
+                        async: false
+                    }).done(function (data) {
+                        if (data.success) {
+                            _message = _message + 'Updated Copyright Notes (LoCR Master Copy)\n';
+                        } else {
+                            _message = _message + 'Failed to update Copyright Notes (LoCR Master Copy) - Check logs.\n';
+                        }
+                        _do_reload = true;
+                    }).fail(function () {
+                        _message = _message + 'Unable to connect to LiCR API - Check logs\n';
+                    }).always(function () {
+                        $.ajax({
+                            url: "/docstore.updateNote",
+                            type: "POST",
+                            data: fd,
+                            cache: false,
+                            processData: false,
+                            contentType: false,
+                            dataType: 'json',
+                            async: false
+                        }).done(function (data) {
+                            if (data.success) {
+                                _message = _message + 'Updated Copyright Notes (DocStore Copy)\n';
+                            }
+                            else {
+                                _message = _message + 'Failed to update Copyright Notes (DocStore Copy) - Check logs.\n';
+                            }
+                            _do_reload = true;
+                        }).fail(function () {
+                            _message = _message + 'Unable to connect to DocStore API - Check logs\n';
+                        }).always(function () {
+                        });
+                    });
+
+
+                }
+
+                return {message: _message, reload: _do_reload, done: true};
+            }
+
+
+            function saveCopyrightChanges() {
+
+                _do_reload = false;
+                _message = 'Requested Actions: \n';
+
+                __status = __details = __cover = __notes = false;
+
+                __statusCheck = checkStatus();
+                __status = __statusCheck.done;
+                _do_reload = (_do_reload ? _do_reload : __statusCheck.reload);
+                _message = _message + __statusCheck.message;
+
+
+                __detailsCheck = checkDetails();
+                __details = __detailsCheck.done;
+                _do_reload = (_do_reload ? _do_reload : __detailsCheck.reload);
+                _message = _message + __detailsCheck.message;
+
+                __coverCheck = checkCover();
+                __cover = __coverCheck.done;
+                _do_reload = (_do_reload ? _do_reload : __coverCheck.reload);
+                _message = _message + __coverCheck.message;
+
+                __notesCheck = checkNote();
+                __notes = __notesCheck.done;
+                _do_reload = (_do_reload ? _do_reload : __notesCheck.reload);
+                ;
+                _message = _message + __notesCheck.message;
+
+                while (!(__status && __details && __cover && __notes)) {
+                }
+
+                console.log(_message);
+
+                if (_do_reload) {
+                    _message = _message + '\n\nReloading Page';
+                    alert(_message);
+                    location.reload();
+                }
+                else {
+                    _message = 'No Changes Have Been Detected on User Form. \n\nIf you believe this is an error, please use the "Report an Issue" button to notify us.\nIf possible, a screenshot would be great! Thanks!';
+                    alert(_message);
+                }
+            }
+
+
+            function updatePercentage() {
+                var den = parseInt($('#copyright-determination-entire-work').val());
+                var num = parseInt($('#copyright-determination-page-count').val());
+
+                $('#copyright-determination-percentage-work').val(((num / den) * 100).toFixed(2));
+            }
+
+            //because js math sucks and we're not going fancy on key capturing
+            setInterval(updatePercentage, 750);
+
+
+            $('.copyright-buttons').on('click', function () {
+                /* Init Buttons */
+                $('.btn-group').find('.btn-primary').addClass('btn-info').removeClass('btn-primary');
+                $('.btn-group').find('.btn-danger').addClass('btn-info').removeClass('btn-danger');
+                $('.btn-group').find('.btn-success').addClass('btn-info').removeClass('btn-success');
+
+                // repaint
+                $(document.body).addClass('dummyClass').removeClass('dummyClass');
+
+                if ($(this).val() == 1) {
+                    $(this).removeClass('btn-info').addClass('btn-danger');
+                }
+                else {
+                    $(this).removeClass('btn-info').addClass('btn-success');
+                }
+
+                copy_status = $(this).val();
+
+                if (debug) {
+                    console.log('I am now ' + $(this).val())
+                }
+            });
+
+            $(document).ready(function () {
+                if ({{ copyrightStatus }} > 0 ) {
+                    $('#copyright-status-{{ copyrightStatus }}').trigger('click');
+                    /* Init Buttons */
+                    $('.btn-group').find('.btn-primary').addClass('btn-info').removeClass('btn-primary');
+                    $('.btn-group').find('.btn-danger').addClass('btn-info').removeClass('btn-danger');
+                    $('.btn-group').find('.btn-success').addClass('btn-info').removeClass('btn-success');
+
+                    // repaint
+                    $(document.body).addClass('dummyClass').removeClass('dummyClass');
+
+                    if ( {{ copyrightStatus }} == 1 ) {
+                        $('#copyright-status-{{ copyrightStatus }}').removeClass('btn-info').addClass('btn-danger');
+                    } else {
+                        $('#copyright-status-{{ copyrightStatus }}').removeClass('btn-info').addClass('btn-success');
+                    }
+                } else {
+                    $('#no-pdf-alert').css('display', 'block');
+                    $('.btn-group').find('.copyright-buttons').attr('disabled', 'disabled');
+                }
+            });
+
+
+            $('#pdf-submit').click(function () {
+                "use strict";
+                $('#docstore-upload-file-modal').reveal({
+                    animation: 'fade',
+                    animationspeed: 300,
+                    closeonbackgroundclick: true,
+                    dismissmodalclass: 'close-reveal-modal'
+                });
+                return false;
+            });
+
+            $('#docstore-upload-file-submit-btn').click(function () {
+                var fd = new FormData();
+                fd.append("actionlabel", 'docstore-submission');
+                fd.append('item_id', {{ itemid }});
+                fd.append('initiator', 'client');
+                fd.append("uploadfile", $("#ubc_id_uploadfile")[0].files[0]);
+                $.ajax({
+                    url: "/docstore.receive",
+                    type: "POST",
+                    data: fd,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    async: false,
+                    dataType: 'json'
+                }).done(function (docstorehash) {
+                    notify('File Received. Reloading Page.', 'success', true, true);
+                    location.reload();
+                }).fail(function (data) {
+                    console.log(data)
+                    notify('Failed to upload item', 'error', true, false);
+                });
+
+            });
+        </script>
+    {% else %}
+        <strong>Duplicate/Deleted: {{ course.course_info.title }}</strong>
+    {% endif %}
+{% endfor %}

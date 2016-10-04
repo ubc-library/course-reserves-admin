@@ -1,0 +1,12 @@
+{
+    "config": {
+        "process-timeout": 1800,
+        "vendor-dir": "./vendor"
+    },
+    "require": {
+        "twig/twig": "@stable",
+        "klein/klein": "2.1.0",
+        "lcobucci/jwt": "@stable",
+        "nesbot/carbon": "@stable"
+    }
+}

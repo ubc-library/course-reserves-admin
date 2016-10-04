@@ -1,0 +1,109 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {search: true} %}
+<div class="container">
+	<div class="content expand">
+		<!-- ======================= Title and Summon Search ====================== -->
+		{% include 'title.inc.html' %}
+		<!-- ======================= App Search =================================== -->
+		{# include 'search.inc.html' #}
+		<!-- ======================= App Starts Here ============================== -->
+		<div class="row-fluid expand">
+			<h1>Broken URL Administration</h1>
+			<h2>{{count}} items</h2>
+			<div>
+				{%for type_id,type in types %} <label for="fcb_{{type_id}}">
+					<input id="fcb_{{type_id}}" type="checkbox" class="type_filter"
+					checked="checked" value="{{type_id}}" /> {{type.name}}
+				</label> {%endfor%}
+			</div>
+			<table>
+				<thead>
+					<tr>
+						<th>Item ID</th>
+						<th>Title</th>
+						<th>Type</th>
+						<th>HTTP Status</th>
+						<th>Don't check anymore</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item_id,data in items %}
+					<tr class="type{{data.type_id}}">
+						<td><a href="/details.item/id/{{item_id}}" target="_blank">{{item_id}}</a></td>
+						<td><div class="details" id="i{{item_id}}"
+							title="Show/hide details">{{data.title}}</div>
+
+							<div id="i{{item_id}}d" style="display: none">
+							<!-- 
+								Author: {{data.author}}<br /> 
+								Call Number: {{data.callnumber}}<br />
+						  -->
+								<table>
+									{%for key,val in data.bibdata %} {%if val!=''%}
+									<tr>
+									<th>{{key}}:</th>
+									<td>{{val}}</td>
+									</tr>
+									{%endif%} {%endfor%}
+								</table>
+								Current URL: <a id="current{{item_id}}" href="{{data.uri}}"
+									target="_blank">{{data.uri|slice(0,80)}}</a><br /> Original
+								URL: <a href="{{data.original_uri}}" target="_blank">{{data.original_uri|slice(0,80)}}</a><br />
+								Resolved URL: <a href="{{data.resolved_uri}}" target="_blank">{{data.resolved_uri|slice(0,80)}}</a><br />
+								<label for="n{{item_id}}">Update URL: </label><input
+									class="newurl" id="n{{item_id}}" type="text" style="width: 60%" />&nbsp;
+								<button class="newurlbutton" value="{{item_id}}">Update</button>
+							</div></td>
+						<td class="type">{{data.type_name}}</td>
+						<td class="http_status">{{data.http_status}}</td>
+						<td class="dontcheck"><input type="checkbox" {%if
+							data.do_not_check== 1 %} checked="checked"
+							{%endif %} value="{{item_id}}" /></td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+  $(document).on('click', '.details', function() {
+    var id = '#' + $(this).attr('id') + 'd';
+    //  console.log(id);
+    $(id).slideToggle();
+    return false;
+  }).on('click', '.type_filter', function() {
+    if ($(this).is(':checked')) {
+      $('.type' + $(this).val()).fadeIn();
+    } else {
+      $('.type' + $(this).val()).fadeOut();
+    }
+  }).on(
+      'click',
+      '.dontcheck input',
+      function() {
+        var itemid = $(this).val(), setTo = $(this).prop('checked') ? 1 : 0;
+        $.get('/linkchecker.dontcheck/item/' + itemid + '/set/' + setTo, {},
+            function() {
+              return false;
+            });
+      }).on(
+      'click',
+      '.newurlbutton',
+      function() {
+        var itemid = $(this).val(), setTo = $('#n' + itemid).val();
+        $.post('/linkchecker.update', {
+          itemid : itemid,
+          url : setTo
+        }, function(data) {
+          if (data != 1) {
+            alert('Failed to change URL!');
+          } else {
+            $('#current' + itemid).text(setTo.substring(0, 80)).attr('href',
+                setTo);
+            $('#n' + itemid).val('');
+          }
+          return false;
+        });
+      });
+</script>

@@ -1,0 +1,598 @@
+{% include 'menu.inc.html' with {'foo': firstname, 'notifications':'Rod I need a getNotifications() plzzzz :('} %}
+<div class="container">
+<div class="content expand" role="main">
+
+<!-- ======================= Title and Login Logout ============================== -->
+
+<div class="row-fluid expand">
+    <div class="span9">
+        <h1>Library Course Reserves</h1>
+    </div>
+    <div class="span3">
+        <div class="who">
+            Welcome, {{firstname}}<br />
+            <a href="/login.bye">Sign Out</a><br />
+            <a href="http://ubc.summon.serialssolutions.com"
+               target="_blank">Search Summon
+                <i class="icon icon-external-link"></i>
+                <br />
+            </a>
+        </div><!-- ./who -->
+    </div>
+</div><!-- /.row-fluid -->
+
+<!-- ======================= App Starts Here ============================== -->
+
+<!-- ================  Row 1 - title and button ================  -->
+<div class="row-fluid expand">
+    <div class="span9">
+        <h1 class="item-details-title">{{ bibdata.Title }} [Item#<span id="item-id">{{ itemid }}</span>]</h1>
+    </div>
+    <div class="span3 who">
+        <button id="send-to-copyright-button" class="btn btn-info">Send Item to Copyright</button>
+    </div>
+</div><!-- /.row-fluid -->
+
+<!-- ================  Row 2, split into spa9 and span 3 ================  -->
+<div class="clearfix"></div><br>
+<div class="row-fluid expand">
+    
+    <!-- ================  Left Hand Side  ================  -->
+    <div class="span9">
+        <form id="item-status-form" class="form-horizontal">
+            <div class="row-fluid expand">
+                <div class="span10">
+                    <div class="control-group">
+                        <label class="control-label" for="item-status">Status</label>
+                        <div class="controls">
+                            <select class="span8" id="item-status">
+                                <option selected>{{ bibdata.CurrentStatus }}</option>
+                                {% for nextstatus in nextstatuses %}
+                                    <option>{{ nextstatus.status }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="span2">
+                    <button class="btn btn-orange" id="item-save-btn-top">Save</button>
+                </div>
+            </div>
+            
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-visibility">Visibility</label>
+                        <div class="controls" id="item-visibility">
+                            <label class="radio span2">
+                                <input type="radio" name="visibility" id="optionsRadios1" value="1" checked>
+                                Display Item
+                            </label>
+                            <label class="radio span2">
+                                <input type="radio" name="visibility" id="optionsRadios2" value="2">
+                                Hide Item
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-format">Format*</label>
+                        <div class="controls">
+                            <select class="span8" id="item-format">
+                                {% for tid,type in format %}
+                                    <option {% if  tid == typeid %} selected {% endif %}>{{ type }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <sup><em>* Controls what metadata fields are shown below</em></sup>
+                </div>
+            </div>
+        </form>
+        
+        <form id="item-details-form">
+            <!-- ================  bibliographic details  ================  -->
+            <div class="clearfix"></div><br><h1 class="details-section">bibliographic details</h1>
+            
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-title">Title</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-title" placeholder="{{ bibdata.Title }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-chapter">Chapter/Article</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-chapter" placeholder="{{ bibdata.ArticleTitle }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-author">Author</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-author" placeholder="{{ bibdata.Author }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row-fluid expand">
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-publisher">Publisher</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-publisher" placeholder="{{ bibdata.Publisher }}">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-editor">Editor</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-editor" placeholder="{{ bibdata.Editor }}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="row-fluid expand">
+                <div class="span4">
+                    <div class="control-group">
+                        <label class="control-label" for="item-year">Year</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-year" placeholder="{{ bibdata.JournalYear }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="control-group">
+                        <label class="control-label" for="item-volume">Volume</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-volume" placeholder="{{ bibdata.Volume }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="control-group">
+                        <label class="control-label" for="item-edition">Edition</label>
+                        <div class="controls">
+                            <input class="span12" type="text" id="item-edition" placeholder="{{ bibdata.Issue }}">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="clearfix"></div><br>
+                
+                <div class="row-fluid expand">
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="item-call-no">Call Number</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="item-call-no" placeholder="{{ bibdata.Callnumber }}" disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="item-isxn">ISXN</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="item-isxn" placeholder="{{ bibdata.ISXN }}" disabled="true">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="item-pgrange">Page Range</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="item-pgrange" placeholder="{{ bibdata.Pages }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="span3">
+                        <div class="control-group">
+                            <label class="control-label" for="item-totalpgs">Total Pages</label>
+                            <div class="controls">
+                                <input class="span12" type="text" id="item-totalpgs" placeholder="{{ bibdata.PageCount }}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ================  Requests  ================  -->
+            <div class="clearfix"></div><br><h1 class="details-section">Course Requests</h1>
+            
+            {% for itemcourse in itemcourses %}
+                <div class="accordion" id="anavailable-accordian">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse" data-parent="#unavailItems" href="#unavailItems">
+                            <i class="icon-chevron-right"></i> {{ itemcourse.title }}
+                            </a>
+                        </div>
+                        <div id="unavailItems" class="accordion-body collapse">
+                            <div class="accordion-inner">
+                                <div class="row-fluid expand">            
+                                    <div class="span4">
+                                        <div class="control-group">
+                                            <label class="control-label" for="item-requested">Requested Date</label>
+                                            <div class="controls">
+                                                <input type="text" id="item-requested" placeholder="20-Apr-13">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span4">
+                                        <div class="control-group">
+                                            <label class="control-label" for="item-loan-period">Loan Period</label>
+                                            <div class="controls" id="item-loan-period">
+                                                <select class="span9">
+                                                    <option>{{ bibdata.LoanPeriodText }}</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="span4">
+                                        <div class="control-group">
+                                            <label class="control-label" for="item-request-type">Request Type</label>
+                                            <div class="controls" id="item-request-type">
+                                                <select class="span12">
+                                                    <option>Book</option>
+                                                    <option>2</option>
+                                                    <option>3</option>
+                                                    <option>4</option>
+                                                    <option>5</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row-fluid expand">            
+                                    <div class="span12">
+                                        <!-- repeat the entire control group when outputting multiplt urls -->
+                                        <div class="control-group">
+                                            <label class="control-label" for="item-uri-1">URL</label>
+                                            <div class="controls input-append span11">
+                                                <input class="span11" type="text" id="item-uri-1" placeholder="bit.ly/skk" value="{{ bibdata.Location }}">
+                                                <a href="{{ bibdata.Location }}" target="_blank" class="btn btn-info">Visit URL <i class="icon-external-link"></i></a>
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div><br>
+                                        <button class="btn btn-info" type="button" id="add-item-url-btn">
+                                            <span class="icon-stack add-url-stack">
+                                                <i class="icon-circle-blank icon-stack-base"></i>
+                                                <i class="icon-plus"></i>
+                                            </span> Add another URL
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+            <!-- ================  Dates  ================  -->
+            <div class="clearfix"></div><br><h1 class="details-section">dates</h1>
+            
+            <div class="row-fluid expand">             
+               <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-request-start-date">Start Date of Request</label>
+                        <div class="controls span12">
+                            <input class="span12" type="text" id="{{ itemid }}start-date" placeholder="23-Dec-13">
+                        </div>
+                    </div>
+                </div> 
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-request-available-type">Make Request Available...</label>
+                        <div class="controls" id="item-request-available-type">
+                            <select class="span12">
+                                <option>On start date</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="row-fluid expand">            
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-request-stop-date">Stop Date of Request</label>
+                        <div class="controls span12">
+                            <input class="span12" type="text" id="{{ itemid }}stop-date" placeholder="3-Jun-14">
+                        </div>
+                    </div>
+                </div>
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-request-unavailable-type">Make Request Unavailable...</label>
+                        <div class="controls" id="item-request-unavailable-type">
+                            <select class="span12">
+                                <option>Two weeks before end date</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            
+            <!-- ================  Location Details  ================  -->
+            <div class="clearfix"></div><br><h1 class="details-section">location details</h1>
+            
+            <div class="row-fluid expand">            
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-owning-branch">Owning Branch</label>
+                        <div class="controls" id="item-owning-branch">
+                            <select class="span12">
+                                <option>Koerner Library</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-shelf-location">Shelf Location</label>
+                        <div class="controls span12">
+                            <input class="span12" type="text" id="item-shelf-location" placeholder="n/a">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="row-fluid expand">            
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-processing-branch">Processing Branch</label>
+                        <div class="controls" id="item-processing-branch">
+                            <select class="span12">
+                                <option>{{ bibdata.ProcessingLocation }}</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="span6">
+                    <div class="control-group">
+                        <label class="control-label" for="item-pickup-branch">Pickup Branch</label>
+                        <div class="controls" id="item-pickup-branch">
+                            <select class="span12">
+                                <option>{{ bibdata.PickupLocation }}</option>
+                                <option>2</option>
+                                <option>3</option>
+                                <option>4</option>
+                                <option>5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <!-- ================  Instructor Support ================  -->
+            <div class="clearfix"></div><br><h1 class="details-section">instructor support</h1>
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-instructor-tags">Instructor Tags</label>
+                        <div class="controls span12">
+                            <input class="span12" type="text" id="item-instructor-tags" placeholder="use, comma, separated, tags, please, thank, you">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row-fluid expand">
+                <div class="span12">
+                    <div class="control-group">
+                        <label class="control-label" for="item-instructor-notes-to-students">Instructor Notes to Students</label>
+                        <div class="controls span12">
+                            <textarea class="span12" id="item-instructor-notes-to-students" rows="5" placeholder="suffer you peons! muahahahahahahahaha *cruella deville twirl*"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            
+             <!-- ================  Form Ends Here  ================  -->
+            <div class="clearfix"></div><br>
+            <div class="row-fluid expand">
+                <div class="span3 offset9 details-controls-wrap">
+                    <button id="reset-main-form" class="btn btn-info" type="reset">Cancel</button>
+                    <button id="submit-main-changes" class="btn btn-info btn-orange">Save</button>
+                </div>
+            </div>
+        </form>
+    </div><!-- /span9 -->
+    
+    <!-- ================  Right Hand Side================  -->
+    <div class="span3">
+        <div class="alert alert-notes info-box">
+            <div class="info-box-header-wrap">
+                  <span class="icon-stack">
+                    <i class="icon-check-empty icon-stack-base"></i>
+                    <i class="icon-reorder"></i>
+                </span>
+                <span class="info-box-header">Notes</span>  
+            </div>
+            
+            <p>I'd like the reserve item to be "hidden" fromt he students
+            for the exam 2 weeks before the end of the course<br>
+            - <span class="note-author">Peter Nosco</span>, <span class="note-date">11-Jul-13</span></p>
+            <hr>
+            <p>The item record has been updated to reflect this.<br>
+            - <span class="note-author">Linda Wensveen</span>, <span class="note-date">12-Jul-13</span></p>
+            
+            <textarea id="note-submit" name="note-submit" placeholder="Add note here.." rows="5"></textarea>
+            <button class="btn btn-inverse" id="note-submit-btn">Add Note</button>
+        </div><!-- /infobox -->
+        
+        <div class="alert alert-courses info-box courses">
+            <div class="info-box-header-wrap">
+                <i class="icon-book"></i>
+                <span class="info-box-header">Courses</span>
+            </div>
+            
+            <p>
+                <span class="course-name">Premodern Japan</span><br>
+                <span class="course-term">2013W2</span><br>
+                <span class="course-code">ASIA 314</span> <span class="course-section">Section 001</span><br>
+                <span class="course-prof"></span>Peter Nosco<br>
+                <span class="course-start">23-Dec-13</span> - <span class="course-stop">3-Jun-14</span><br>
+                CourseID: <span class="course-id">25120</span>
+            </p>
+        </div><!-- /courses -->
+        
+        <div class="alert alert-item-history info-box item-history">
+            <div class="info-box-header-wrap">
+                <i class="icon-time icon-flip-horizontal"></i>
+                <span class="info-box-header">Item History</span>
+            </div>
+            
+            <p>
+                <span class="item-history-log-date">12-Jul-13</span> @ <span class="item-history-log-time">9:04 a.m.</span><br>
+                <span class="item-history-log-message">Record details updated by
+                <span class="item-history-log-actor">Linda Wensveen</span>
+            </p>
+            
+            <hr>
+            
+            <p>
+                <span class="item-history-log-date">12-Jul-13</span> @ <span class="item-history-log-time">9:04 a.m.</span><br>
+                <span class="item-history-log-message">Status changed to In Stacks Searching by
+                <span class="item-history-log-actor">Linda Wensveen</span>
+            </p>
+            
+            <hr>
+                
+                <p>
+                <span class="item-history-log-date">11-Jul-13</span> @ <span class="item-history-log-time">9:04 a.m.</span><br>
+                <span class="item-history-log-message">Request submitted by
+                <span class="item-history-log-actor">Peter Nosco</span>
+            </p>
+            
+        </div><!-- /infobox -->
+    </div>
+</div><!-- /.row-fluid -->
+<div class="clearfix"></div><br>
+
+
+
+</div><!-- /.content.expand role= main-->
+
+<!-- UX STUFF
+<!-- Put Modals and other JS Driven UX Stuff here -->
+
+<div id='pick-slip-modal' style="display: none">
+    
+    <div class="alert alert-error">
+        <strong>Pick Slip Notice</strong>
+    </div>
+    ebook Pick Slips have been sent to the printer
+</div>
+<!-- /UX Stuff -->
+
+</div><!-- /.container -->
+
+<!-- Add JS after content-->
+<script>
+    $(document).ready(function() {
+        
+        $('#item-save-btn-top').on('click', function(){
+            var status = encodeURIComponent($( "#item-status option:selected" ).text());
+            var type = encodeURIComponent($( "#item-format option:selected" ).text());
+            var itemid = ($( "#item-id" ).text());
+            
+            var url = "{{base_url}}/update.topdetails";
+            var jqxhr = $.post(url, { i: itemid, s: status, t: type}, function(data) {
+                //log
+            })
+            .done(function(data) {
+                //log
+            })
+            .error(function(XMLHttpRequest, textStatus, errorThrown) {
+                //log
+             })
+            .fail(function(data) {
+                //log
+            });
+
+            return false;
+        });
+        
+        $(function() {
+            $('.accordion').on('show', function (e) {
+                 $(e.target).prev('.accordion-heading').find('.accordion-toggle').removeClass('collapsed');
+                 $(e.target).prev('.accordion-heading').find('i.icon-chevron-right').removeClass('icon-chevron-right icon-chevron-down').addClass('icon-chevron-down');
+                 e.stopPropagation();
+            });
+            $('.accordion').on('hide', function (e) {
+                $(this).find('.accordion-toggle').not($(e.target)).addClass('collapsed');
+                $(e.target).prev('.accordion-heading').find('i.icon-chevron-down').removeClass('icon-chevron-down icon-chevron-right').addClass('icon-chevron-right');
+                e.stopPropagation();
+            });
+        });
+        var nowTemp = new Date();
+        var now = new Date(nowTemp.getFullYear(), nowTemp.getMonth(), nowTemp.getDate(), 0, 0, 0, 0);
+         
+        var checkin = $('#{{ itemid }}start-date').datepicker({
+          onRender: function(date) {
+            return date.valueOf() < now.valueOf() ? 'disabled' : '';
+          }
+        }).on('changeDate', function(ev) {
+          if (ev.date.valueOf() > checkout.date.valueOf()) {
+            var newDate = new Date(ev.date)
+            newDate.setDate(newDate.getDate() + 1);
+            checkout.setValue(newDate);
+          }
+          checkin.hide();
+          $('#{{ itemid }}stop-date')[0].focus();
+        }).data('datepicker');
+        var checkout = $('#{{ itemid }}stop-date').datepicker({
+          onRender: function(date) {
+            return date.valueOf() <= checkin.date.valueOf() ? 'disabled' : '';
+          }
+        }).on('changeDate', function(ev) {
+          checkout.hide();
+        }).data('datepicker');
+    });
+</script>

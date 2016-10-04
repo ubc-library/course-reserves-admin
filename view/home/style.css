@@ -1,0 +1,105 @@
+/* 
+    Document   : style
+    Created on : 2-Oct-2013, 9:51:20 AM
+    Author     : rod
+    Description:
+        Purpose of the stylesheet follows.
+*/
+.no-transition {
+  -webkit-transition: height 0.01s;
+  -moz-transition: height 0.01s;
+  -ms-transition: height 0.01s;
+  -o-transition: height 0.01s;
+  transition: height 0.01s;
+}
+
+.home-search-row {
+    margin: 10px -15px;
+}
+
+.home-search {
+    border: 1px solid rgba(247, 247, 247, 0);
+    background-color: #F5F5F5;
+    padding: 15px 0;
+    margin: 0;
+    text-align: center;
+}
+
+.home-search form {
+    margin: 0 auto;
+}
+
+.home-search form input.search-entry-input{
+    height: 38px;
+    border: 1px solid #E9E9E9;
+    border-radius: 3px;
+}
+
+.home-search .btn.span1 {
+    vertical-align: super;
+}
+
+#awaiting-section h1 {
+    margin-top: 0px;
+}
+
+.print-pickslip-area span.last-print-date-time {
+    text-align: right;
+    margin: 0;
+}
+
+
+.btn-printing {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    float: right;
+    clear: both;
+}
+
+.btn-printing.orange {
+	color: #fef4e9;
+	border: solid 1px #da7c0c;
+	background: #f78d1d;
+	background: -webkit-gradient(linear, left top, left bottom, from(#faa51a), to(#f47a20));
+	background: -moz-linear-gradient(top,  #faa51a,  #f47a20);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#faa51a', endColorstr='#f47a20');
+}
+
+.btn-printing.orange:hover {
+	background: #f47c20;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f88e11), to(#f06015));
+	background: -moz-linear-gradient(top,  #f88e11,  #f06015);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f88e11', endColorstr='#f06015');
+}
+
+.btn-printing.orange:active {
+	color: #fcd3a5;
+	background: -webkit-gradient(linear, left top, left bottom, from(#f47a20), to(#faa51a));
+	background: -moz-linear-gradient(top,  #f47a20,  #faa51a);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#f47a20', endColorstr='#faa51a');
+}
+
+.last-print-date-time {
+    color: #666;
+}
+
+#book-bottom-controls {
+    text-align: right;
+}
+
+#select-all-book, #deselect-all-book {
+    float: right;
+    margin-left: 10px
+}
+
+.status-change-menus  {
+    right: 0px;
+    left: auto;
+}
+.status-change-menus li {
+    border-bottom: none;
+}
+.status-change-menus li a {
+    text-decoration: none;
+}

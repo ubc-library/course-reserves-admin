@@ -1,0 +1,161 @@
+<div class="row-fluid">
+    <div class="span5" id="pending-changes">
+    </div>
+    <div class="span6 offset1">
+
+            <button class="btn {{ isCopyright?'btn-danger':'btn-success' }}" type="button" id="add-item-url-btn" onclick="$('#add-url-modal').reveal()" {{ isCopyright?'disabled':'' }}>
+                    {% if isCopyright %}
+	                    Can't add DocStore URLs
+	                {% else %}
+		                <span class="icon-stack add-url-stack">
+		                    <i class="icon-circle-blank icon-stack-base"></i>
+                            <i class="icon-plus"></i>
+		                    </span>
+		                &nbsp;Add another URL
+                    {% endif %}
+            </button>
+
+
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span12">
+
+	    {% if isCopyright %}
+            <h4>Get Source PDF</h4>
+            <strong>The following link allows staff to get the source PDF for processing. Do not share.</strong><br><br>
+            <a href="/docstore.getSource/i/{{ info.item_id }}" target="_blank" class="btn btn-info">Source PDF Access&nbsp;<i class="fa fa-cloud-download"></i></a>
+            <hr>
+		    <h4>Staff DocStore Access</h4>
+		    <strong>The following link allows staff to verify a DocStore URL without having to pass through Connect. Do not share.</strong><br><br>
+		    <a href="/docstore.get/i/{{ info.item_id }}" target="_blank" class="btn btn-info">Internal PDF Access&nbsp;<i class="fa fa-cloud-download"></i></a>
+	        <hr>
+	    {% endif %}
+
+        <strong>UBC Go URL</strong><br>
+        <a href="{{ gourl }}" target="_blank">{{ gourl }}</a><br><br>
+        <strong>Primary URL (e.g. from Summon or DocStore)</strong>
+        <div class="input-prepend input-append">
+	        <input type="text" id="{{ info.item_id }}-uri" placeholder="" value="{{ info.uri }}" class="input-block-level" style="width: 68%" disabled="true">
+	        <a href="{{ info.uri }}"
+	           target="_blank"
+	           class="btn {{ uri_dead?'btn-danger white':'btn-info' }}">
+		            {{ uri_dead?'DEAD':'Visit' }}&nbsp;<i class="icon-external-link"></i>
+	        </a>
+	        <a href="#" class="btn btn-btn-inverse" {% if not isCopyright %}onclick="editPrimUrl({{ info.item_id }}); return false;"{% else %}disabled{% endif %}>Edit</a>
+        </div>
+    </div>
+
+
+
+    {% if addurls %}
+        <h4 style="margin-top: 0">Additional URLS</h4>
+        {% for urikey,uri in addurls %}
+            <div class="row-fluid">
+                <div class="span12">
+                    <p><strong>Description: </strong>
+                        {{ uri.description }}</p>
+
+                    <div class="input-prepend input-append">
+                        {% if uri_dead %}
+                            <input type="text" id="{{ urikey }}-uri" placeholder="" value="{{ uri.url }}" class="input-block-level" style="width: 68%"
+                                   disabled="true">
+                            <a href="{{ ('http' in uri.url) ? uri.url : 'http://' ~ uri.url }}" target="_blank" class="btn btn-info">Visit <i
+                                        class="icon-external-link"></i></a>
+                            <a href="#" class="btn btn-btn-inverse" onclick="editAltUrl({{ urikey }}); return false;">Edit</a>
+                        {% else %}
+                            <input type="text" id="{{ urikey }}-uri" placeholder="" value="{{ uri.url }}" class="input-block-level" style="width: 68%"
+                                   disabled="true">
+                            <a href="{{ ('http' in uri.url) ? uri.url : 'http://' ~ uri.url }}" target="_blank" class="btn btn-info">Visit <i
+                                        class="icon-external-link"></i></a>
+                            <a href="#" class="btn btn-btn-inverse" onclick="editAltUrl({{ urikey }}); return false;">Edit</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <br>
+        {% endfor %}
+    {% endif %}
+</div>
+
+
+<!-- ADD URL MODAL -->
+<div id="add-url-modal" class="reveal-modal">
+    <h3>Add URL</h3>
+
+    <div class="row-fluid expand">
+        <strong>URL:</strong><br>
+        <input type="text" name="add-url-uri" value="" style="width: 100%;"/>
+
+        <br>
+
+        <strong>Description:</strong><br>
+        <input type="text" name="add-url-description" value="" style="width: 100%;"/>
+        <br>
+
+        <strong>Format:</strong><br>
+        <select name="add-url-format" style="width: 100%">
+            {# preselect the same type as the item type, assume if providing an alt-link tits likely of same type#}
+            {% for key,type in template_types %}
+                <option value="{{ key }}" {{ (key == typeid)?'selected':'' }}>{{ type.displayname }}</option>
+            {% endfor %}
+        </select>
+        <br>
+
+        <input type="hidden" name="add-url-itemid" value="{{ itemid }}"/>
+
+        <div style="float: right">
+            <button class="btn btn-danger" id="add-url-cancel" onclick="$('#add-url-modal').trigger('reveal:close'); return false;">Cancel</button>
+            <button class="btn btn-success" id="add-url-confirm"
+                    onclick="addAltURL({{ itemid }},$('[name=add-url-uri]').val(),$('[name=add-url-description]').val(),$('[name=add-url-format] option:checked').val()); return false;">
+                Confirm
+            </button>
+        </div>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<!-- EDIT MODALS -->
+<div id="edit-prim-url-modal" class="reveal-modal">
+    <h3>Edit URL</h3>
+
+    <div class="row-fluid expand">
+        <strong>URL:</strong><br>
+
+        <input type="text" id="edit-prim-url-uri" value="" style="width: 100%;"/>
+        <input type="hidden" id="edit-prim-url-id" value=""/>
+
+        <div style="float: right">
+            <button class="btn btn-danger" id="add-url-cancel" onclick="$('#edit-prim-url-modal').trigger('reveal:close'); return false;">Cancel
+            </button>
+            <button class="btn btn-success" id="add-url-confirm" onclick="editPrimUrlSubmit($('#edit-prim-url-id').val()); return false;">Confirm
+            </button>
+        </div>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="edit-alt-url-modal" class="reveal-modal">
+    <h3>Edit URL</h3>
+
+    <div class="row-fluid expand">
+        <strong>URL:</strong><br>
+
+        <input type="text" id="edit-alt-url-uri" value="" style="width: 100%;"/>
+        <input type="hidden" id="edit-alt-url-id" value=""/>
+
+        <div style="float: right">
+            <button class="btn btn-inverse" id="add-url-cancel" onclick="$('#edit-alt-url-modal').trigger('reveal:close'); return false;">Cancel
+            </button>
+            <button class="btn btn-success" id="add-url-confirm" onclick="editAltUrlSubmit($('#edit-alt-url-id').val()); return false;">Confirm
+            </button>
+            <button class="btn btn-danger" id="add-url-confirm" onclick="deleteAltUrl($('#edit-alt-url-id').val()); return false;">Delete</button>
+        </div>
+    </div>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+<!-- END ADD URL -->
+
+<div id="url-saved-modal" class="reveal-modal alert-success">
+    <div class="alert alert-success">URL Saved. Reloading Page</div>
+</div>

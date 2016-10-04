@@ -1,0 +1,21 @@
+<h3>{{report}}</h3>
+<table>
+  <thead>
+    <tr>
+      {%for heading in headings %}
+      <th>{{heading}}</th>
+      {%endfor%}
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in physical %}
+    <tr>
+      {%for key,heading in headings %}
+      <td>
+        {{item[key]}}
+      </td>
+      {%endfor%}
+    </tr>
+    {% endfor %} 
+  </tbody>
+</table>

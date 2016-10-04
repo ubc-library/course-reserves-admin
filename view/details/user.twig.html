@@ -1,0 +1,127 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'broken': brokenlinks, 'newcount': newqcount, 'search': true} %}
+<div id="status-msgs">
+    <div class="row-fluid expand">
+        <div class="span11">
+            <span><b>Response: </b></span><span id="add-status">This is default.twig instead of {{ template_name }}.twig</span>
+        </div>
+        <div class="span1">
+            <a href="#" id="status-msgs-close-menu">Close &#215;</a>
+        </div>
+    </div><!-- /.row-fluid -->
+</div>
+<div class="container">
+    <div class="content expand" role="main" id="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+<!-- ======================= App Starts Here ============================== -->
+
+<!-- ================  Row 1 - title and button ================  -->
+<div class="row-fluid expand">
+    <div class="span12">
+        <h1 class="item-details-title">User: {{  user.firstname }} {{ user.lastname }}</h1>
+    </div>
+</div><!-- /.row-fluid -->
+
+<!-- ================  Row 2, split into spa9 and span 3 ================  -->
+<div class="clearfix"></div><br>
+<div class="row-fluid expand">
+    <div class="span12">
+        <!-- ================  Details  ================  -->
+        <div class="clearfix"></div><h1 class="details-section">details</h1>
+        <div class="row-fluid expand">
+            <div class="span3">
+                <div class="control-group">
+                    <label class="control-label" for="user-fullname">Name</label>
+                    <div class="controls">
+                        <input class="span12" type="text" id="user-fullname" value="{{ user.firstname }} {{ user.lastname }}" disabled="true">
+                    </div>
+                </div>
+            </div>
+            <div class="span3">
+                <div class="control-group">
+                    <label class="control-label" for="user-username">Username</label>
+                    <div class="controls">
+                        <input class="span12" type="text" id="user-username" value="{{ user.puid }}" disabled="true">
+                    </div>
+                </div>
+            </div>
+            <div class="span2">
+                <div class="control-group">
+                    <label class="control-label" for="user-libraryid">LibraryID</label>
+                    <div class="controls">
+                        <input class="span12" type="text" id="user-libraryid" value="{{ user.libraryid }}" disabled="true">
+                    </div>
+                </div>
+            </div>
+            <div class="span4">
+                <div class="control-group">
+                    <label class="control-label" for="user-email">Email</label>
+                    <div class="controls">
+                        <div class="input-append span12">
+                            {% if user.email %}
+                                <input type="text" id="user-email" value="{{ user.email }}" disabled="true" class="span10">
+                                <a href="mailto:{{ user.email }}" class="btn btn-success" type="button"><i class="icon-envelope"></i></a>
+                            {% else %}
+                                <input type="text" id="user-email" value="" disabled="true" class="span10">
+                                <a href="javascript:alert('No user email found');void(0);" class="btn btn-danger" type="button"><i class="icon-envelope"></i></a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ================  Enrolled Courses Table  ================  -->
+        <div class="clearfix"></div><br><h1 class="details-section">courses</h1>
+        <div class="row-fluid expand">
+            <div class="span12">             
+                <table class="table span12">
+                    <tr>
+                        <th class="span10">Course Name</th>
+                        <th class="span4">Semester</th>
+                        <th class="span4">Role</th>
+                    </tr>
+                    
+                    {% for course in courses %}
+                    <tr>
+                        <td><a href="/details.course/id/{{ course.courseid }}">{{ course.coursename }}</a></td>
+                        <td>{{ course.semester }}</td>
+                        <td>{{ course.role }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            </div>
+        </div><!-- /.row-fluid -->
+    </div><!-- /span12 -->
+</div><!-- /.row-fluid -->
+<div class="clearfix"></div><br>
+</div><!-- /.content.expand role= main-->
+
+<!-- UX STUFF
+<!-- Put Modals and other JS Driven UX Stuff here -->
+
+<div id='pick-slip-modal' style="display: none">
+    
+    <div class="alert alert-error">
+        <strong>Notice</strong>
+    </div>
+    Successfully Copied Items
+</div>
+<!-- /UX Stuff -->
+
+</div><!-- /.container -->
+
+<script>
+    $(document).ready(function() {
+        $('.accordion').on('show', function (e) {
+             $(e.target).prev('.accordion-heading').find('.accordion-toggle').removeClass('collapsed');
+             $(e.target).prev('.accordion-heading').find('i.icon-chevron-right').removeClass('icon-chevron-right icon-chevron-down').addClass('icon-chevron-down');
+             e.stopPropagation();
+        });
+        $('.accordion').on('hide', function (e) {
+            $(this).find('.accordion-toggle').not($(e.target)).addClass('collapsed');
+            $(e.target).prev('.accordion-heading').find('i.icon-chevron-down').removeClass('icon-chevron-down icon-chevron-right').addClass('icon-chevron-right');
+            e.stopPropagation();
+        });
+    });
+</script>

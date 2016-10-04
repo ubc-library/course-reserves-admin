@@ -1,0 +1,110 @@
+<div class="alert alert-notes info-box">
+    <div class="info-box-header-wrap">
+                          <span class="icon-stack">
+                            <i class="icon-check-empty icon-stack-base"></i>
+                            <i class="icon-reorder"></i>
+                        </span>
+        <span class="info-box-header">Notes</span>
+    </div>
+
+
+    {#  @ note.timestamp|date("g:m a")  #}
+    {% for key,note in notes|reverse(true)|slice(0,3,true) %}
+        <p id="note-{{ key }}"><span class="note-content">{{ note.content }}</span><br>
+        - <span class="note-author">{{ note.firstname }} {{ note.lastname }}</span>, <span class="note-date">{{ note.timestamp|date("Y-m-d") }}</span><a href="#"  data-note-edit-id="{{ key }}" title="Edit Note"><i class="icon-edit"></i></a></p>
+        <hr>
+    {% endfor %}
+    <textarea id="note-submit" name="note-submit" placeholder="Add note here.." rows="5"></textarea>
+    Note Applies To:<br>
+    {% for key,value in roles %}
+        {% if value != 'Administrator' and value != 'Student' %}
+            <label class="checkbox">
+                <input type="checkbox" id="inlineCheckbox-{{ key }}" data-role="note-groups" value="{{ key }}">{{ value }}
+            </label>
+        {% endif %}
+    {% endfor %}
+    <button class="btn btn-inverse" id="note-submit-btn">Add Note</button>
+</div><!-- /infobox -->
+
+<script>
+    var itemid = {{ itemid }};
+
+
+    $('#note-submit-btn').on('click', function(){
+        $('#add-status').html("Saving...");
+        $('#status-msgs').css('top','52px');
+        $('#main').css('opacity','0.1');
+        var selected = false;
+        var hasContent = false;
+        var saved = false;
+        var content = $.trim($('#note-submit').val());
+        var warning = 'Warning:';
+        var warningcount = 0;
+        var roles = '';
+        if (content.length > 0){
+            hasContent = true;
+        }
+        else {
+            warning += ' ['+ ++warningcount +'] You need to enter a note.';
+        }
+
+
+        var firstChecked = false;
+        $("[data-role='note-groups']").each(function(){
+
+            if($(this).is(':checked')){
+                selected = true;
+                if(firstChecked)
+                    roles += ',' + $(this).val();
+                else {
+                    roles += $(this).val();
+                    firstChecked = true;
+                }
+
+            }
+        });
+        if(!(selected)){
+            warning += ' ['+ ++warningcount +'] You need to select the group(s) (checkboxes) that the note will be sent to.';
+        }
+
+
+        if (selected && hasContent){
+
+            roles = JSON.stringify(roles);
+            var jsonContent = JSON.stringify(content);
+            $.ajax({
+                type: "POST",
+                url: "{{base_url}}/update.itemnote",
+                data: { i: itemid, c: jsonContent, r: roles},
+                dataType: 'json'
+            })
+            .done(function( data ) {
+                ///var data = $.parseJSON(msg);
+                if(data.success){
+                    $('#add-status').html("Saved! Close notice to reload page");
+                    $('#status-msgs').css('border-bottom-color','green');
+                    saved = true;
+                }
+                else {
+                    $('#add-status').html("Error: " + data.message);
+                    $('#status-msgs').css('border-bottom-color','red');
+                }
+                console.log(data.message);
+            })
+            .fail(function( jqXHR, textStatus ) {
+                $('#add-status').html("Fatal Error: Could not connect to server to save changes");
+                $('#status-msgs').css('border-bottom-color','red');
+            });
+        }
+        else {
+            $('#add-status').html(warning);
+        }
+
+        $('#status-msgs-close-menu').on('click', function(){
+            $('#status-msgs').css('top','0px').css('border-bottom-color','#F7C273');
+            $('#main').css('opacity','1');
+            if(saved){window.location.reload();}
+        });
+        return false;
+    });
+</script>

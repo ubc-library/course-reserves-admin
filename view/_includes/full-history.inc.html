@@ -1,0 +1,23 @@
+<div id="view-history-modal" class="reveal-modal xxlarge">
+    <h2>Item History</h2><br>
+    {% for row in itemhistory|reverse %}
+    <p>
+        <span class="item-history-log-date">{{ row.time|date("Y-m-d") }}</span>
+        <span class="item-history-log-time">{{ row.time|date("g:i a") }}</span>
+        <span class="item-history-log-actor">{{ attribute(users, row.puid).firstname }} {{attribute(users, row.puid).lastname}}</span>
+        <br />
+        <span class="item-history-log-data-state">{{ row.note }}</span>
+<!--
+        <br>
+        <span class="item-history-log-message">Record details updated by
+            <span class="item-history-log-actor">{{ attribute(users, row.puid).firstname }} {{attribute(users, row.puid).lastname}}</span>
+        </span>
+        <br>
+        <span class="item-history-log-data-state" style="display: none;">{{ row.note }}</span>
+    </p>
+    -->
+    <hr />
+    {% endfor %}
+    <div class="clearfix"></div>
+    <a class="close-reveal-modal">&#215;</a>
+</div>

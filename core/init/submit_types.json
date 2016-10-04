@@ -1,0 +1,204 @@
+{
+    "pdf_general": {
+        "item_title":     1,
+        "item_author":    1,
+        "item_publisher": 1,
+        "item_pubplace":  1,
+        "item_pubdate":   1,
+        "item_incpages":  1,
+        "item_isxn":      1
+    },
+    "pdf_article": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_incpages": 1,
+        "journal_title": 1,
+        "journal_volume": 0,
+        "journal_issue": 0,
+        "journal_month": 0,
+        "journal_year": 0,
+        "item_isxn": 0,
+        "item_doi": 0
+    },
+    "pdf_chapter": {
+        "collection_title": 1,
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 1,
+        "item_editor": 0,
+        "item_edition": 0,
+        "item_incpages": 1,
+        "item_isxn": 0,
+        "item_callnumber": 0
+    },
+    "pdf_other": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 1,
+        "item_incpages": 1,
+        "item_isxn": 0
+    },
+
+    "book_general": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_isxn": 0,
+        "item_callnumber": 0
+    },
+    "book_chapter": {
+        "collection_title": 1,
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_incpages": 1,
+        "item_isxn": 0,
+        "item_callnumber": 0
+    },
+    "ebook_general": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_isxn": 0,
+        "item_uri": 0
+    },
+    "ebook_chapter": {
+        "collection_title": 1,
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_incpages": 1,
+        "item_isxn": 0,
+        "item_callnumber": 0,
+        "item_uri": 0
+    },
+
+    "web_general": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_uri": 1,
+        "item_pubdate": 0
+    },
+
+    "electronic_article": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_incpages": 1,
+        "journal_title": 1,
+        "journal_volume": 0,
+        "journal_issue": 0,
+        "journal_month": 0,
+        "journal_year": 0,
+        "item_isxn": 0,
+        "item_doi": 0,
+        "item_uri": 0
+    },
+
+    "stream_general": {
+        "item_title": 1,
+        "item_author": 0,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_editor": 0,
+        "item_callnumber": 0,
+        "item_uri": 0
+    },
+    "stream_video": {
+        "item_title": 1,
+        "item_author": 0,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_editor": 0,
+        "item_callnumber": 0,
+        "item_uri": 0
+    },
+    "stream_music": {
+        "item_title": 1,
+        "item_author": 0,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_editor": 0,
+        "item_callnumber": 0,
+        "item_uri": 0
+    },
+    "stream_online": {
+        "item_title": 1,
+        "item_author": 0,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_editor": 0,
+        "item_uri": 0
+    },
+
+    "physical_general": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_edition": 0,
+        "item_callnumber": 0
+    },
+    "physical_unknown_type": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_incpages": 0,
+        "item_isxn": 0,
+        "item_edition": 0,
+        "item_editor": 0,
+        "item_callnumber": 0
+    },
+
+    "undetermined": {
+        "item_title": 1,
+        "item_author": 1,
+        "item_publisher": 0,
+        "item_pubplace": 0,
+        "item_pubdate": 0,
+        "item_incpages": 0,
+        "journal_title": 0,
+        "journal_volume": 0,
+        "journal_issue": 0,
+        "journal_month": 0,
+        "journal_year": 0,
+        "item_isxn": 0,
+        "item_doi": 0,
+        "item_edition": 0,
+        "item_editor": 0,
+        "item_callnumber": 0,
+        "item_uri": 0
+    }
+}

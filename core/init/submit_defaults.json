@@ -1,0 +1,110 @@
+{
+    "collection_title": {
+        "display_name": "Book Title",
+        "machine_name": "collection_title",
+        "placeholder": "Full Collection/Unit/Work/Book Title",
+        "tooltip": "Please do not abbreviate unless if your citation is abbreviated"
+    },
+    "item_title": {
+        "display_name": "Title",
+        "machine_name": "item_title",
+        "placeholder": "Full Title e.g. Oscar Wilde: An Illustrated Anthology",
+        "tooltip": "Please do not abbreviate unless if your citation is abbreviated"
+    },
+    "item_author": {
+        "display_name": "Author(s)",
+        "machine_name": "item_author",
+        "placeholder": "Wilde, Oscar; Jabbari, Nasrollah; Smith, Leili",
+        "tooltip": "Last Name, First Name; Last Name, First Name..."
+    },
+    "journal_title": {
+        "display_name": "Journal Title",
+        "machine_name": "journal_title",
+        "placeholder": "e.g Journal of Economic Literature",
+        "tooltip": "Please do not abbreviate unless if your citation is abbreviated"
+    },
+    "journal_volume": {
+        "display_name": "Journal Volume",
+        "machine_name": "journal_volume",
+        "placeholder": "e.g 44",
+        "tooltip": "Please enter the journal's volume number e.g 12"
+    },
+    "journal_issue": {
+        "display_name": "Journal Issue",
+        "machine_name": "journal_issue",
+        "placeholder": "Issue e.g 4",
+        "tooltip": "Please enter the journal's issue number e.g 4"
+    },
+    "journal_month": {
+        "display_name": "Journal Month",
+        "machine_name": "journal_month",
+        "placeholder": "Month e.g. 02",
+        "tooltip": "Month e.g. 02"
+    },
+    "journal_year": {
+        "display_name": "Journal Year",
+        "machine_name": "journal_year",
+        "placeholder": "Year e.g 2012",
+        "tooltip": "Year e.g 2012"
+    },
+    "item_incpages": {
+        "display_name": "Page(s)",
+        "machine_name": "item_incpages",
+        "placeholder": "e.g. 12-15",
+        "tooltip": "e.g. 12-15"
+    },
+    "item_isxn": {
+        "display_name": "ISXN",
+        "machine_name": "item_isxn",
+        "placeholder": "ISXN e.g 1949-4998",
+        "tooltip": "Please enter an (E)ISXN if available, e.g 1949-4998"
+    },
+    "item_doi": {
+        "display_name": "DOI",
+        "machine_name": "item_doi",
+        "placeholder": "e.g 10.2165.123",
+        "tooltip": "Please enter the DOI this article can use to be resolved e.g 10.2165.123"
+    },
+    "item_edition": {
+        "display_name": "Edition",
+        "machine_name": "item_edition",
+        "placeholder": "Edition e.g. i, II, first ed.",
+        "tooltip": "Please enter the edition of the item in question, if available"
+    },
+    "item_editor": {
+        "display_name": "Editor",
+        "machine_name": "item_editor",
+        "placeholder": "e.g. Goodman, Clive",
+        "tooltip": "Please enter the editor's information, if available"
+    },
+    "item_publisher": {
+        "display_name": "Publisher",
+        "machine_name": "item_publisher",
+        "placeholder": "Prentice Hall",
+        "tooltip": "Prentice Hall"
+    },
+    "item_pubplace": {
+        "display_name": "Publication Place",
+        "machine_name": "item_pubplace",
+        "placeholder": "Place of Publication e.g. New York",
+        "tooltip": "Place of Publication e.g. New York"
+    },
+    "item_pubdate": {
+        "display_name": "Publication Date",
+        "machine_name": "item_pubdate",
+        "placeholder": "Date (yyyy) of Publication",
+        "tooltip": "Date (yyyy) of Publication"
+    },
+    "item_callnumber": {
+        "display_name": "Call Number",
+        "machine_name": "item_callnumber",
+        "placeholder": "e.g. QT 6.235.12.2012",
+        "tooltip": "Call Number"
+    },
+    "item_uri": {
+        "display_name": "URI",
+        "machine_name": "item_uri",
+        "placeholder": "e.g. http://www.youtube.com/jbrary",
+        "tooltip": "Please enter the full URL to the resource, if available"
+    }
+}

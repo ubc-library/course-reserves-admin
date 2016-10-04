@@ -1,0 +1,98 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'search': true} %}
+<div class="container homepage">
+    <div class="content expand" role="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+        <!-- ======================= App Search =================================== -->
+        {% include 'search.inc.html' %}
+        <!-- ======================= App Starts Here ============================== -->
+        <div class="row-fluid expand">
+            <div class="span8 home-filter">
+                <!-- Start Filter:Location Block -->
+                <div class="btn-group" style="width: 190px">
+                    <!-- use jquery to rewrite btn#id.text with the selected value -->
+                    <span class="span-inverse" id="location-filter" style="width: 155px">Location: {{ branch_name }}</span>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" style="width: 35px"><span class="caret" style="border-top-color: #000;
+border-bottom-color: #000;"></span></button>
+                    <ul class="dropdown-menu" id="location-filter-ul" style="width: 187px">
+                        <li>
+                            <a href="#" class="location-toggle" data-id="-1">All</a>
+                        </li>
+                        {% for item in branches %}
+                            <li>
+                                <a href="#" class="location-toggle" data-id="{{ item.branch_id }}">{{ item.name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <script>
+                    $('.location-toggle').each(function () {
+                        $(this).on('click', function () {
+                            $('#location-filter').text('Location: ' + $(this).text());
+                            $('.homepage').css('opacity', '0.2');
+//                            $('body').css('background', 'url(http://www.ajaxload.info/cache/FF/FF/FF/00/00/00/1-0.gif)').css('background-repeat', 'no-repeat').css('background-position', 'center');
+                            window.location = '/home.complete/location/' + $(this).attr('data-id');
+                        });
+
+                    });
+                </script>
+                <!-- End Filter:Location Block -->
+
+                <!-- Start Filter:Role Block -->
+                <div class="btn-group" style="width: 200px">
+                    <!-- use jquery to rewrite btn#id.text with the selected value -->
+                    <span class="span-inverse" id="view-filter" style="width: 165px">View: Completed</span>
+                    <button class="btn btn-info dropdown-toggle" data-toggle="dropdown" style="width: 35px"><span class="caret" style="border-top-color: #000;
+border-bottom-color: #000;"></span></button>
+                    <ul class="dropdown-menu" id="view-filter-ul" style="width: 197px">
+                        <li>
+                            <a href="/home/location/{{ branch_id }}">New / In Process</a>
+                        </li>
+                        <li>
+                            <a href="/home.complete/location/{{ branch_id }}">Completed</a>
+                        </li>
+                        <li>
+                            <a href="/home.archive/location/{{ branch_id }}">Archive</a>
+                        </li>
+                        <li>
+                            <a href="/home.copyright/location/{{ branch_id }}">Copyright</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- <div class="btn-group">
+                     <a class="btn btn-primary btn-success" id="role-filter" href="/home.copyright">Switch to Copyright View</a>
+                </div>
+                 <div class="btn-group">
+                     <a class="btn btn-inverse" id="complete-filter" href="/home.complete">View All</a>
+                 </div> -->
+                <p>{{ message }}</p>
+            </div>
+            <!-- /.home-filter -->
+        </div>
+        <!-- /.row-fluid -->
+
+        <!-- Completed Queues -->
+        <div class="row-fluid expand" id="complete-section">
+            <div class="span12">
+                {% if types %}
+                    {% for type_id,type in types %}
+                        {% include 'accordian-complete.inc.html' with {'type_id': type_id, 'type':type, 'branch_id': branch_id, 'statuses_complete': statuses_complete, 'isArchive': 0 } %}
+                    {% endfor %}
+                {% else %}
+                    <p>There are no Complete items for {{ branch_name }}.</p>
+                {% endif %}
+            </div>
+        </div><!-- /.row-fluid -->
+
+
+    </div>
+    <!-- /.container = main-->
+</div>
+<div class="cleafix"><br></div>
+<script>window.base_url = "{{ base_url }}";</script>
+
+<script>
+
+</script>

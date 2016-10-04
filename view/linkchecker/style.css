@@ -1,0 +1,14 @@
+.details{
+  text-decoration:underline;
+  cursor:pointer;
+}
+.details:hover{
+  background-color:#ddf;
+}
+th{background-color:#ddd;}
+td,th{vertical-align:top; border-right:1px dotted #ccc;}
+tr{border-top:1px solid #ccc;border-bottom:1px solid #ccc;}
+.type,.http_status,.dontcheck{text-align:center;}
+label{display:inline;vertical-align:15%;}
+button{vertical-align:15%;}
+td table td{width:80%}

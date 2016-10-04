@@ -1,0 +1,202 @@
+<!-- ======================= Menu and Logout ============================== -->
+{% include 'menu.inc.html' with {'broken': brokenlinks, 'newcount': newqcount, 'search': false} %}
+<div class="container">
+    <div class="content expand" role="main">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+
+        <!-- ======================= App Search =================================== -->
+        {% include 'search.inc.html' %}
+
+        <div class="clearfix"></div>
+        <br>
+        <!-- =============================================================================== -->
+        <div class="row-fluid expand">
+            <div class="span12">
+                <h1><span id="number-of-search-results">{{ itemCount+courseCount+userCount }}</span> Search Results</h1>
+                <p>You searched for "{% if searchterm %}{{ searchterm }}{% endif %}". <em>{{ cached }}
+                        in {{ coursetimetaken }} s.</em></p>
+            </div>
+        </div>
+
+
+        <br>
+
+        <!-- Accordians -->
+        <div class="row-fluid expand" id="awaiting-section">
+            <div class="span12">
+                <div class="accordion" id="items-accordian">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse"
+                               data-parent="#accordion2" href="#itemsAcc">
+                                <i class="icon-chevron-right"></i> Items (<span
+                                        id="item-search-result-count">{{ itemCount }}</span>)
+                            </a>
+                        </div>
+                        <div id="itemsAcc" class="accordion-body collapse">
+                            <div class="accordion-inner noborder">
+
+                                <table class="table span12 tablesorter tablesorter-ice" id="item-results">
+                                    <thead>
+                                    <tr>
+                                        <th class="span2">Format</th>
+                                        <th class="span1">Item#</th>
+                                        <th class="span3">Call#</th>
+                                        <th class="span5">Item/Chapter/Article Title</th>
+                                        <th class="span4">Journal/Parent Book/Collection</th>
+                                        <th class="span3">Author</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in items %}
+                                        <tr>
+                                            {% set map = {
+                                            'pdf_general':'PDF Book',
+                                            'pdf_article':'PDF Article',
+                                            'pdf_chapter':'PDF Chapter',
+                                            'pdf_other':'PDF Other',
+                                            'physical_unknown_type':'Unknown',
+                                            'stream_general':'Streaming Media',
+                                            'electronic_article':'Article',
+                                            'book_chapter':'Chapter',
+                                            'book_general': 'Book',
+                                            'ebook_chapter':'Chapter',
+                                            'ebook_general': 'eBook',
+                                            'undetermined': 'Undetermined',
+                                            'physical_general': 'Physical',
+                                            'web_general': 'Website',
+                                            'stream_video': 'CD/DVD',
+                                            'stream_music': 'CD/DVD' } %}
+                                            <td>{{ attribute(map,item.physical_format) }}</td>
+                                            <td><a href="/details.item/id/{{ item.itemid }}"
+                                                   target="_blank">{{ item.itemid }}</a></td>
+                                            <td>{{ item.callnumber }}</td>
+                                            <td>{{ item.title }}
+                                                {% if item.item_edition  and item.item_edition  != '' %}
+                                                    <br/>Edition: {{ item.item_edition }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ item.collection }}
+                                                {% if item.journal_volume and item.journal_volume != '' %}
+                                                    <br/>Volume: {{ item.journal_volume }}
+                                                {% endif %}
+                                                {% if item.journal_issue and item.journal_issue != '' %}
+                                                    &nbsp;Issue: {{ item.journal_issue }}
+                                                {% endif %}
+                                            </td>
+                                            <td>{{ item.author }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion" id="courses-accordian">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse"
+                               data-parent="#accordion2" href="#coursesAcc">
+                                <i class="icon-chevron-right"></i> Courses (<span
+                                        id="courses-search-result-count">{{ courseCount }}</span>)</a>
+                        </div>
+                        <div id="coursesAcc" class="accordion-body collapse">
+                            <div class="accordion-inner noborder">
+                                <table class="table span12 tablesorter tablesorter-ice" id="course-results">
+                                    <thead>
+                                    <tr>
+                                        <th class="span2">CourseID</th>
+                                        <th class="span7">Course Name</th>
+                                        <th class="span2">Semester</th>
+                                        <th class="span4">Branch</th>
+                                        <th class="span3">Reserve Items</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for course in courses %}
+                                        <tr>
+                                            <td><a href="/details.course/id/{{ course.courseid }}"
+                                                   target="_blank">{{ course.courseid }}</a></td>
+                                            <td>{{ course.coursename }}</td>
+                                            <td>{{ course.semester }}</td>
+                                            <td>{{ course.branch }}</td>
+                                            <td>{{ course.reserves }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="accordion" id="users-accordian">
+                    <div class="accordion-group">
+                        <div class="accordion-heading">
+                            <a class="accordion-toggle accordion-primary collapsed" data-toggle="collapse"
+                               data-parent="#accordion2" href="#usersAcc">
+                                <i class="icon-chevron-right"></i> Users (<span
+                                        id="user-search-result-count">{{ userCount }}</span>)</a>
+                        </div>
+                        <div id="usersAcc" class="accordion-body collapse">
+                            <div class="accordion-inner noborder">
+                                <table class="table span12 tablesorter tablesorter-ice" id="user-results">
+                                    <thead>
+                                    <tr>
+                                        <th class="span6">User</th>
+                                        <th class="span4">Username (PUID)</th>
+                                        <th class="span3">LibraryID</th>
+                                        <th class="span5">Email</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for user in users %}
+                                        <tr>
+                                            <td><a href="/details.user/id/{{ user.puid }}"
+                                                   target="_blank">{{ user.name }}</a></td>
+                                            <td>{{ user.puid }}</td>
+                                            <td>{{ user.libraryid }}</td>
+                                            <td>{{ user.email }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div><!-- /.row-fluid -->
+        <!-- End Queues -->
+        <div class="row-fluid expand">
+            <div class="span12">
+                <p>Item Search and Processing Time: <em>{{ itemTime }} s</em></p>
+                <p>Course Search and Processing Time: <em>{{ courseTime }} s</em></p>
+                <p>User Search and Processing Time: <em>{{ userTime }} s</em></p>
+            </div>
+        </div>
+    </div><!-- /.content.expand role= main-->
+</div><!-- /.container -->
+
+<!-- Add JS after content-->
+<script>
+    $(document).ready(function () {
+        $('#item-results').tablesorter();
+        $('#course-results').tablesorter();
+        $('#user-results').tablesorter();
+
+        $(function () {
+            $('.accordion').on('show', function (e) {
+                $(e.target).prev('.accordion-heading').find('.accordion-toggle').removeClass('collapsed');
+                $(e.target).prev('.accordion-heading').find('i.icon-chevron-right').removeClass('icon-chevron-right icon-chevron-down').addClass('icon-chevron-down');
+                e.stopPropagation();
+            });
+            $('.accordion').on('hide', function (e) {
+                $(this).find('.accordion-toggle').not($(e.target)).addClass('collapsed');
+                $(e.target).prev('.accordion-heading').find('i.icon-chevron-down').removeClass('icon-chevron-down icon-chevron-right').addClass('icon-chevron-right');
+                e.stopPropagation();
+            });
+        });
+    });
+</script>

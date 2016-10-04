@@ -1,0 +1,13 @@
+.error{
+font-weight:bold;
+color:red;
+background-color:#FF8;
+}
+#log{
+	border:1px solid #ccc;
+	height:320px;
+	overflow-y:auto;
+}
+#log li{
+	font-family:monospace;
+}

@@ -1,0 +1,112 @@
+<!-- ======================= Menu and Logout ============================= -->
+{% include 'menu.inc.html' with {search: true} %}
+<div class="container">
+    <div class="content expand">
+        <!-- ======================= Title and Summon Search ====================== -->
+        {% include 'title.inc.html' %}
+        <!-- ======================= App Search =================================== -->
+        {# include 'search.inc.html' #}
+        <!-- ======================= App Starts Here ============================== -->
+        <div class="row-fluid expand">
+            <h2><a href="/program">Program Administration</a></h2>
+            <div class="alert alert-danger hidden" role="alert" id="programFailed"></div>
+            {% if level=='top' %}
+                <div class="span5">
+                    <h3>Programs</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Program Name</th>
+                            <th>Graduation Year</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="prgtb">
+                        {% for program in programs %}
+                            <tr id="prgtr{{ program.program_id }}">
+                                <td><a target="_blank" href="{{ baseurl_cr }}program/id/{{ program.program_id }}">{{ program.name }}</a></td>
+                                <td>{{ program.gradyear }}</td>
+                                <td>
+                                    <button class="btn prgedit" value="{{ program.program_id }}">Edit</button>
+                                    <button class="btn prgdelete" value="{{ program.program_id }}">Delete</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="span5">
+                    <h3>Add a New Program</h3>
+                    <div class="alert alert-danger hidden" role="alert" id="addProgramFailed"></div>
+                    <label for="addprogram_name">Name: </label>
+                    <input type="text" id="addprogram_name"/>
+                    <label for="addprogram_gradyear">Graduation Year: </label>
+                    <select id="addprogram_gradyear">
+                        {% set thisyear="now"|date("Y") %}
+                        {% for year in (thisyear-2)..(thisyear+4) %}
+                            <option value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn" id="addprogram">Add Program</button>
+                </div>
+            {% elseif level=='program' %}
+                <div class="span5">
+                    <h3 id="programTitle">Courses in Program &ldquo;{{ program_info.name }}&rdquo;
+                        [{{ program_info.gradyear }}]</h3>
+                    <table>
+                        <thead>
+                        <tr>
+                            <th>Course ID</th>
+                            <th>Course</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody id="crstb">
+                        {% for course_id,course in courses.courses %}
+                            <tr id="crstr{{ course_id }}">
+                                <td>{{ course_id }}</td>
+                                <td>{{ course.title }}</td>
+                                <td>
+                                    <button class="btn rmcourse" value="{{ course_id }}">Remove</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="span5">
+                    <h3>Add Course to Program</h3>
+                    <div class="alert alert-danger hidden" role="alert" id="addCourseFailed"></div>
+                    <label for="addcourse_id">Course: </label> <input type="text"
+                                                                      id="addcourse_id" placeholder="Begin typing..."/>
+                    <div id="crssearchres" style="position: relative"></div>
+
+
+                    <hr/>
+                    <h3>Update Program</h3>
+                    <div class="alert alert-danger hidden" role="alert" id="updateProgramFailed"></div>
+                    <div class="alert alert-success hidden" id="updateProgramSuccess"></div>
+                    <form>
+                        <label for="update_program_title">Program Title</label>
+                        <input type="text" value="{{ program_info.name }}" id="update_program_title"> <br/>
+                        <label for="update_graduation_year">Graduation Year</label>
+                        <input type="text" value="{{ program_info.gradyear }}" id="update_graduation_year"> <br/>
+                        <button class="btn updateProgram" value="{{ program_info.program_id }}"
+                                style="margin-left: 1em;margin-bottom: 0.8em;">Update
+                        </button>
+                    </form>
+                </div>
+                <div class="span10">
+
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    var pageLevel = "{{ level }}";
+    var programId = false;
+    {% if level=='program' %}
+        programId = {{ program_info.program_id }};
+    {% endif %}
+</script>

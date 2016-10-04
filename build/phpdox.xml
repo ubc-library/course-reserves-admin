@@ -1,0 +1,15 @@
+<phpdox xmlns="http://xml.phpdox.net/config">
+    <project name="locr/cr-staff" source="." workdir="build/phpdox">
+        <collector publiconly="false">
+            <include mask="*.php" />
+            <include mask="*/controller/**/**.php" />
+            <include mask="*/model/**/**.php" />
+        </collector>
+
+        <generator output="build">
+            <build engine="html" enabled="true" output="api">
+                <file extension="html" />
+            </build>
+        </generator>
+    </project>
+</phpdox>

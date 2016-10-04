@@ -1,0 +1,306 @@
+<div class="accordion" id="accordian-new-{{ item_suffix }}">
+    <div class="accordion-group">
+        <div class="accordion-heading">
+            <a class="accordion-toggle accordion-primary collapsed accordian-new-{{ item_suffix }}" data-toggle="collapse" data-parent="#accordian-new-{{ item_suffix }}" href="#collapse-new-{{ item_suffix }}">
+                <i class="icon-chevron-right"></i>&nbsp;{{ disp_label }}&nbsp;
+                    (<span id="new-{{ item_suffix }}-count">{{ items|length }}</span>)
+                {% if items %}
+                    {% if item_suffix  == 'physical' or item_suffix == 'cannotbedetermined' %}
+                        <div class="accordion-print" id="print-pick-slip-new-{{ item_suffix }}">
+                            <i class="icon-print"></i>&nbsp;
+                                <span class="accordion-selected-children-count new-{{ item_suffix }}-selected-count">0</span>&nbsp;Selected
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </a>
+        </div>
+        <div id="collapse-new-{{ item_suffix }}" class="accordion-body collapse">
+            <div class="accordion-inner noborder">
+                {% if items %}
+                    <table class="table tablesorter tablesorter-ice new-{{ item_suffix }}-new-table-entries" id="new-{{ item_suffix }}-new-table-entries">
+                        <thead>
+                            <tr>
+                                <th class="span3">Format</th>
+                                <th class="span1">Item#</th>
+                                <th class="span1">Course#</th>
+                                {% if 2 in types|keys or 6 in types|keys or 7 in types|keys %}
+                                <th class="span4">Call#</th>
+                                {% endif %}
+                                <th class="span9">Title</th>
+                                <th class="span5">Page Range</th>
+                                <th class="span8">Author</th>
+                                <th class="span3">Loan Pd</th>
+                                <th class="span4">Requested</th>
+                                <th class="span3">Branch</th>
+                                {% if pcontrols %}
+                                    {% if 2 in types|keys or 7 in types|keys %}
+                                        <th>Print Slip</th>
+                                    {% else %}
+                                        <th>Update Status</th>
+                                    {% endif %}
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for item in items %}
+                            <tr>
+                                {% set map = {
+                                    'pdf_general':'PDF Book',
+                                    'pdf_article':'PDF Article',
+                                    'pdf_chapter':'PDF Chapter',
+                                    'pdf_other':'PDF Other',
+                                    'physical_unknown_type':'Unknown',
+                                    'stream_general':'Streaming Media',
+                                    'electronic_article':'Article',
+                                    'book_chapter':'Chapter',
+                                    'book_general': 'Book',
+                                    'ebook_chapter':'Chapter',
+                                    'ebook_general': 'Book',
+                                    'undetermined': 'Undetermined',
+                                    'physical_general': 'Physical',
+                                    'web_general': 'Website',
+                                    'stream_video': 'CD/DVD',
+                                    'stream_music': 'CD/DVD' }
+                                %}
+                                <td>{{ attribute(map,item.physical_format) }}</td>
+                                <td><a href="/details.item/id/{{item.item_id}}">{{item.item_id}}</a></td>
+                                <td class="lms_course_split">({{ item.course_id }})</td>
+                                {% if 2 in types|keys or 6 in types|keys or 7 in types|keys %}
+                                <td>{{item.callnumber}}</td>
+                                {% endif %}
+                                <td><a href="/details.item/id/{{item.item_id}}">{{item.title}}</a>
+                                    {% if item.bibdata.item_edition %}
+                                        <br/>Edition: {{item.bibdata.item_edition}}
+                                    {% endif %}
+                                    {% if item.bibdata.journal_volume %}
+                                        <br/>Volume: {{item.bibdata.journal_volume}}
+                                    {% endif %}
+                                    {% if item.bibdata.journal_issue %}
+                                        &nbsp;Issue: {{item.bibdata.journal_issue}}
+                                    {% endif %}
+                                </td>
+                                <td>{{item.range}}</td>
+                                <td>{{item.author}}</td>
+                                <td>{{ attribute(loanperiods,item.loanperiod_id) }}</td>
+                                <td>{{item.request_time|date("Y-m-d G:i")}}</td>
+                                <td>{{ attribute(branch_map,item.branch_id) }}</td>
+                                {% if pcontrols %}
+                                    {% if 2 in types|keys or 7 in types|keys %}
+                                        <td><input type="checkbox" class="print-control new-{{ item_suffix }}-print-control" id="{{item.item_id}}" data-course="{{item.course_id}}" data-iid="{{item.item_id}}" data-cid="{{item.course_id}}"/></td>
+                                    {% else %}
+                                        <td><input type="checkbox" class="status-control new-{{ item_suffix }}-status-control" id="{{item.item_id}}" data-course="{{item.course_id}}" data-iid="{{item.item_id}}" data-cid="{{item.course_id}}"/></td>
+                                    {% endif %}
+                                {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if 2 in types|keys or 7 in types|keys %}
+                        <div class="row-fluid expand">
+                            <div class="span5 offset7" id="{{ item_suffix }}-bottom-controls">
+                                <button class="btn btn-info" id="toggle_{{ item_suffix|replace('-','_') }}_pickslip_select_button" onclick="toggle_{{ item_suffix|replace('-','_') }}_pickslip_select_button()" data-ts="selector">Select All</button>
+                            </div>
+                        </div><!-- /.row-fluid -->
+                        <div class="row-fluid expand">
+                            <button class="btn btn-large btn-printing span4 offset8 trigger-print-pickslip" type="button" id="trigger-print-bottom" disabled>Print Selected Pick Slips (<span id="pick-slip-count-bottom" class="pick-slip-count">0</span>)</button>
+                        </div>
+                    {% else %}
+                        <div class="row-fluid expand">
+                            <div class="span5 offset7" id="{{ item_suffix }}-bottom-controls">
+                                <button class="btn btn-info" id="toggle{{ item_suffix|replace({'-':'_'}) }}SelectsButton" onclick="toggle{{ item_suffix|replace({'-':'_'}) }}Selects()" data-ts="selector">Select All</button>                            </div>
+                        </div><!-- /.row-fluid -->
+                    {% endif %}
+
+                {% else %} <!-- ./items if -->
+                    <p>No items on record under "{{ disp_label }}"</p>
+                {% endif %}
+
+
+                <br>
+                <div class="row-fluid expand">
+                    <div class="span9 offset3" id="status-{{ item_suffix }}-bottom-controls" style="text-align: right">
+                        Change Status To
+                        <div class="btn-group" id="menu-{{ item_suffix }}-btn-group">
+                            <button class="btn btn-info" id="v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-label" disabled>Select items first...</button>
+                            <button class="btn btn-info dropdown-toggle" id="v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-caret" data-toggle="dropdown" onclick="toggle{{ item_suffix|replace({'-':'_'}) }}AccordianVisibility()" disabled><span class="caret"></span></button>
+                            <ul class="dropdown-menu {{ item_suffix|replace({'-':'_'}) }}dropdown-menu status-change-menus">
+                                {% for k,v in all_status %}
+                                    {% if k not in next_status|keys %}
+                                        <li><a href="javascript: void(0);" class="{{ item_suffix|replace({'-':'_'}) }}-change" data-statusid="{{k}}">{{v.status_name}}</a></li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        <button class="btn btn-primary" id="change-status-{{ item_suffix|replace({'-':'_'}) }}-save" disabled>Save</button>
+                    </div>
+                </div><!-- /.row-fluid -->
+
+
+
+
+            </div><!-- ./accordian-inner -->
+        </div><!-- ./collapse-new -->
+    </div><!-- ./accordian-group -->
+</div><!-- accordian -->
+
+<script>
+
+
+
+    v{{ item_suffix|replace({'-':'_'}) }}__status_change = -1;
+    v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected = [];
+    v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected_count = 0;
+
+    $('.new-{{ item_suffix|replace({'-':'_'}) }}-{{ (2 in types|keys or 7 in types|keys) ? 'print' : 'status' }}-control').on('change',swapNewControls);
+
+    $('.{{ item_suffix|replace({'-':'_'}) }}-change').on('click', function(){
+        v{{ item_suffix|replace({'-':'_'}) }}__status_change = $(this).data("statusid");
+        console.log(v{{ item_suffix|replace({'-':'_'}) }}__status_change);
+        $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-label').text($(this).text());
+        $('#change-status-{{ item_suffix|replace({'-':'_'}) }}-save').removeAttr('disabled').attr('enabled','enabled');
+    });
+
+    function toggle{{ item_suffix|replace({'-':'_'}) }}AccordianVisibility(){
+        setTimeout(function(){
+            if($('#menu-{{ item_suffix }}-btn-group').hasClass("open")){
+                $('#collapse-new-{{ item_suffix }}').css('overflow','visible');
+            }
+            else {
+                $('#collapse-new-{{ item_suffix }}').css('overflow','hidden');
+            }
+        },125);
+    }
+
+
+    $('#change-status-{{ item_suffix|replace({'-':'_'}) }}-save').on('click',function(){
+
+        //array of all itemid/courseid pairs to change
+        v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected = [];
+
+        //populate array
+        $('.new-{{ item_suffix }}-{{ (2 in types|keys or 7 in types|keys) ? 'print' : 'status' }}-control').each(function(){
+            var _id = $(this).data('iid');
+            if(this.checked){
+                var cids = getArrayOfCourseIds($(this).data('cid'));
+                for (var i = 0; i < cids.length; i++){
+                    v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected.push({
+                        itemid: _id,
+                        courseid: cids[i]
+                    });
+                }
+            }
+        });
+
+        if(debug){
+            console.log(v{{ item_suffix|replace({'-':'_'}) }}__status_change);
+        }
+
+        batchItemStatusUpdate(v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected, v{{ item_suffix|replace({'-':'_'}) }}__status_change);
+    });
+
+
+    function swapNewControls(){
+        var alreadySelected = false;
+        if(v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected_count >= 1){
+            alreadySelected = true;
+        }
+        v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected_count = 0;
+        $('.new-{{ item_suffix|replace({'-':'_'}) }}-{{ (2 in types|keys or 7 in types|keys) ? 'print' : 'status' }}-control').each(function(){
+            if(this.checked){
+                v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected_count += 1;
+            }
+        });
+        if(v{{ item_suffix|replace({'-':'_'}) }}__status_change_selected_count > 0){
+            if(!alreadySelected){
+                $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-label').text('Select a status...');
+            }
+            $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-label').removeAttr('disabled').attr('enabled','enabled');
+            $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-caret').removeAttr('disabled').attr('enabled','enabled');
+
+
+            console.log(v{{ item_suffix|replace({'-':'_'}) }}__status_change);
+
+        }
+        else {
+            $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-label').attr('disabled','disabled');
+            $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-caret').attr('disabled','disabled');
+            $('#v{{ item_suffix|replace({'-':'_'}) }}-status-change-indicator-label').text('Select items first...');
+            $('#change-status-{{ item_suffix|replace({'-':'_'}) }}-save').attr('disabled','disabled').removeAttr('enabled');
+            v{{ item_suffix|replace({'-':'_'}) }}__status_change = -1;
+        }
+
+    }
+
+
+
+
+    function toggle_{{ item_suffix|replace('-','_') }}_pickslip_select_button(){
+        var element = document.getElementById("toggle_{{ item_suffix|replace('-','_') }}_pickslip_select_button");
+        var state = element.getAttribute('data-ts');
+
+        if(state == 'selector'){
+            $('.new-{{ item_suffix }}-new-table-entries .new-{{ item_suffix }}-print-control').each(function(){
+                if(!this.checked){
+                    $(this).trigger('click');
+                }
+            });
+            element.setAttribute('data-ts','deselector');
+            element.innerHTML = "Deselect All";
+        }
+        else {
+            $('.new-{{ item_suffix }}-new-table-entries .new-{{ item_suffix }}-print-control').each(function(){
+                if(this.checked){
+                    $(this).trigger('click');
+                }
+            });
+            element.setAttribute('data-ts','selector');
+            element.innerHTML = "Select All";
+        }
+    }
+
+    function toggle{{ item_suffix|replace({'-':'_'}) }}Selects(){
+        var element = document.getElementById("toggle{{ item_suffix|replace({'-':'_'}) }}SelectsButton");
+        var state = element.getAttribute('data-ts');
+
+        if(state == 'selector'){
+            $('.new-{{ item_suffix|replace({'-':'_'}) }}-{{ (2 in types|keys or 7 in types|keys) ? 'print' : 'status' }}-control').each(function(){
+                if(!this.checked){
+                    $(this).trigger('click');
+                }
+            });
+            element.setAttribute('data-ts','deselector');
+            element.innerHTML = "Deselect All";
+        }
+        else {
+            $('.new-{{ item_suffix|replace({'-':'_'}) }}-{{ (2 in types|keys or 7 in types|keys) ? 'print' : 'status' }}-control').each(function(){
+                if(this.checked){
+                    $(this).trigger('click');
+                }
+            });
+            element.setAttribute('data-ts','selector');
+            element.innerHTML = "Select All";
+        }
+    }
+
+    function update_pickslip_status (){
+        _print_change_selected = [];
+        $("table[class$='-new-table-entries'] input[class$='-print-control']").each(function(){
+            if(this.checked){
+                var _id = $(this).data('iid');
+                var cids = getArrayOfCourseIds($(this).data('cid'));
+
+                for (var i = 0; i < cids.length; i++) {
+                    _print_change_selected.push({
+                        itemid: _id,
+                        courseid: cids[i]
+                    });
+                }
+            }
+        });
+
+        batchItemStatusUpdate(_print_change_selected, 13);
+    }
+
+    $('#new-{{ item_suffix }}-new-table-entries').tablesorter();
+
+</script>

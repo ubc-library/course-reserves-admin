@@ -1,0 +1,533 @@
+<div class="row-fluid expand" id="app-nav">
+    <div class="container">
+        <div class="row-fluid expand">
+            <div class="{{ (search) ? 'span4' : 'span6' }}">
+                <ul class="nav nav-pills nav-left">
+                    <li class="active"><a href="/{% if isCopyright %}home.copyright{% endif %}">Home</a></li>
+
+                    <li class="dropdown">
+                        <a href="javascript: void(0);" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-file"></i>&nbsp;&nbsp; Items</a>
+                        <ul class="dropdown-menu extended notification admin">
+                            <li class="title"><p>Item Management</p></li>
+                            <!-- <li><a href="" id="add-user">User Management</a></li> -->
+<!--                            <li> <a href="javascript:addItem();" id="add-item"> <span class="label badge-info"><i class="icon-plus"></i></span> <span class="message">Add Item</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li> -->
+                            <li> <a href="/pickslips.archive"><span class="label badge-info"><i class="icon-plus"></i></span> <span class="message">Pickslip Archive</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            <li> <a href="/scan"><span class="label badge-info"><i class="icon-plus"></i></span> <span class="message">Scan Pickslips</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            <li> <a href="javascript: void(0);" id="clear_ds"><span class="label badge-info"><i class="icon-minus"></i></span> <span class="message">Clear DocStore Cache</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            {% if role_admin %}
+                            <li> <a href="javascript: void(0);" id="purge_ds"><span class="label badge-info"><i class="icon-minus"></i></span> <span class="message">Delete DocStore Expired</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+
+                    <li><a href="/reports">Reports</a></li>
+
+
+                    <li class="dropdown">
+                        <a href="javascript: void(0)" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-gear"></i>&nbsp;&nbsp; Admins</a>
+                        <ul class="dropdown-menu extended notification admin">
+                            <li class="title"><p>Admin Functions</p></li>
+                            <!-- <li><a href="" id="add-user">User Management</a></li> -->
+                            <li> <a href="javascript: void(0);" id="add-user"> <span class="label badge-info"><i class="icon-plus"></i></span> <span class="message">User Management</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            <li> <a href="javascript: void(0);" id="add-idbox-user"> <span class="label badge-info"><i class="icon-plus"></i></span> <span class="message">ID Box User Management</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            <!--<li> <a href="/linkchecker" id="broken-links"> <span class="label badge-info"><i class="icon-link"></i></span> <span class="message">Broken Links</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li> -->
+                            <!-- <li> <a href="javascript:void(0);"> <span class="label label-success"><i class="icon-plus"></i></span> <span class="message">New user registration.</span> <span class="time">10 mins</span> </a> </li> -->
+                            {% if (role_programadmin or role_admin) %}
+                                <li> <a href="/program"> <span class="label badge-info"><i class="icon-group"></i></span> <span class="message">Program/Cohort Management</span> <span class="time">&nbsp;&nbsp;&nbsp;&nbsp;</span> </a> </li>
+                            {% endif %}
+                            <!-- <li class="footer"> <a href="javascript:void(0);">View all notifications</a> </li> -->
+                        </ul>
+                    </li>
+
+                </ul>
+            </div>
+            {% if search %}
+            <div class="span3 menu-search">
+                <form action="/search" method="post">
+                    <input name="ss" type="text" class="span9" placeholder="enter search terms..." />
+                    <input type="submit" value="Search" class="btn btn-info span3" />
+                </form>
+            </div>
+            {% endif %}
+            <div class="{{ (search) ? 'span5' : 'span5 offset1' }}">
+                
+                <ul class="nav nav-pills nav-right">
+                    <li class="dropdown">
+                        <a href="javascript: void(0)" class="dropdown-toggle" data-toggle="dropdown">Welcome, {{ auth_fname }}</a>
+                        <ul class="dropdown-menu extended notification user-area">
+                            <li class="title"><p>User Area - {{ puid }}</p></li>
+                            {% if (role_admin or role_progamadmin) %}
+                                <li><a href="/admin.refresh">Clear Memcache</a></li>
+                            {% endif %}
+                            <li><a href="/login.bye">Sign Out</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- <li class="debug"><a href="mailto:email@adddress">Report an Issue</a></li> -->
+
+                    <li class="dropdown">
+                        <a href="javascript: void(0)" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-warning-sign"></i>&nbsp;&nbsp;{{ menu_links+menu_count }}</a>
+                        <ul class="dropdown-menu extended notification">
+                            <li class="title"><p>You have {{ menu_links+menu_count }} new notifications</p></li>
+                            <li> <a href="/linkchecker" target="_blank"> <span class="label label-danger"><i class="icon-warning-sign"></i></span> <span class="message">{{ menu_links }} Broken Links</span> <span class="time"><!-- 5 mins --></span> </a> </li>
+                            <!-- <li> <a href="javascript:void(0);"> <span class="label label-success"><i class="icon-plus"></i></span> <span class="message">New user registration.</span> <span class="time">10 mins</span> </a> </li> -->
+                            <li> <a href="javascript: void(0);"> <span class="label label-info"><i class="icon-bullhorn"></i></span> <span class="message">{{ menu_count }} New items in queue.</span> <span class="time"><!-- 5 mins --></span> </a> </li>
+                            <li> <a href="javascript: void(0);"> <span class="label label-warning"><i class="icon-bolt"></i></span> <span class="message">Disk space is {{ menu_space }}% full.</span> <span class="time"><!-- 5 mins --></span> </a> </li>
+                            <!-- <li class="footer"> <a href="javascript:void(0);">View all notifications</a> </li> -->
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div><!-- /.row-fluid -->
+    </div>
+</div>
+
+
+
+<div id="add-user-modal" class="reveal-modal large">
+    <h2>User Management</h2>
+    <p>Your PUID is {{ puid }}</p>
+    <strong>User Action : </strong>
+    <div class="btn-group" data-toggle="buttons-radio">
+        <button type="button" class="btn btn-success" id="toggle-register">Add User</button>
+        <button type="button" class="btn btn-info" id="toggle-deregister">Remove User</button>
+    </div>
+    <hr>
+    <form class="form-horizontal">
+        <div class="control-group">
+          <label class="control-label" for="register-puid">User PUID(s) (csv)</label>
+          <div class="controls">
+              <input id="register-puid" name="register-puid" placeholder="puid eg 123456789123"/>
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="register-course">Course</label>
+          <div class="controls">
+              <input id="register-course" name="register-course" placeholder="courseID eg 8561" />
+          </div>
+        </div>
+
+        <div class="control-group">
+          <label class="control-label" for="register-course">Role</label>
+          <div class="controls">
+              <select id="register-role" name="register-role">
+                  <option value="-1">Select Role...</option>
+              </select>
+          </div>
+        </div>
+        <input type="hidden" id="register-action" value="register" />
+    </form>
+    <hr>
+    <h3>Verification <img src="/css/images/ajax-loader.gif" id="ajax-loader" style="display: none;"></h3>
+    <p id="reg-para">You want to add the user <b><span id="register-user"></span></b><br>
+        into the course <b><span id="register-course-title"></span></b><br>
+        in the role <b><span id="register-user-role"></span></b></p>
+
+    <p id="dereg-para" style="display: none;">You want to remove the user <b><span id="register-userd"></span></b><br>
+        from the course <b><span id="register-course-titled"></span></b></p>
+    <div class="clearfix"></div>
+    <button class="btn" id="register-btn">Register User</button><span id="register-success"></span>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+
+<div id="add-idbox-user-modal" class="reveal-modal large">
+    <h2>ID Box User Management</h2>
+    <p>Your PUID is {{ puid }}</p>
+
+    <strong>User Action : </strong>
+    <div class="btn-group" data-toggle="buttons-radio">
+        <button type="button" class="btn btn-success" id="toggle-idbox-register">Add User</button>
+        <button type="button" class="btn btn-info" id="toggle-idbox-deregister">Remove User</button>
+    </div>
+    <hr>
+
+    <form class="form-horizontal">
+        <div class="control-group">
+            <label class="control-label" for="register-idbox-puid">User PUID</label>
+            <div class="controls">
+                <input id="register-idbox-puid" name="register-idbox-puid" placeholder="puid eg 123456789123"/>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="register-idbox-role">Role</label>
+            <div class="controls">
+                <div id="register-idbox-role"></div>
+            </div>
+        </div>
+        <input type="hidden" id="register-idbox-action" value="register" />
+    </form>
+    <hr>
+    <h3>Verification <img src="/css/images/ajax-loader.gif" id="idbox-ajax-loader" style="display: none;"></h3>
+    <p id="reg-idbox-para">You want to add the user <b><span id="register-idbox-user"></span></b><br>
+        to the ID Box roles <b><span id="register-idbox-user-role"></span></b></p>
+
+    <p id="dereg-idbox-para" style="display: none;">You want to remove the user <b><span id="register-idbox-userd"></span></b><br>
+        from the role <b><span id="register-idbox-user-roled"></span></b></p>
+    <div class="clearfix"></div>
+    <button class="btn" id="register-idbox-btn">Register User</button><span id="register-idbox-success"></span>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+<div id="status-updates-modal" class="reveal-modal fullscreen">
+    <div id="status-update-message"></div>
+    <a class="close-reveal-modal">&#215;</a>
+</div>
+
+
+<script>
+$('#clear_ds').on('click', function(){
+   purgeCache();
+});
+
+$('#purge_ds').on('click', function () {
+    purgeFiles();
+});
+
+    $("#add-idbox-user").click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        $(this).closest('li.dropdown').removeClass('open');
+
+        $('#add-idbox-user-modal').reveal({
+            animation: 'fadeAndPop',
+            animationspeed: 300,
+            closeonbackgroundclick: false,
+            dismissmodalclass: 'close-reveal-modal',
+            open: function () {
+                $("#toggle-idbox-register").on('click', function(){
+                    $("#register-idbox-action").val('register');
+                    $(this).removeClass('btn-info').addClass('btn-success');
+                    $("#toggle-idbox-deregister").removeClass('btn-success').addClass('btn-info');
+                    $("#register-idbox-btn").text('Register User');
+                    $("#dereg-idbox-para").css('display','none');
+                    $("#reg-idbox-para").css('display','inline');
+                    $("body").addClass("dummyClass").removeClass("dummyClass");
+                });
+                $("#toggle-idbox-deregister").on('click', function(){
+                    $("#register-idbox-action").val('deregister');
+                    $(this).removeClass('btn-info').addClass('btn-success');
+                    $("#toggle-idbox-register").removeClass('btn-success').addClass('btn-info');
+                    $("#register-idbox-btn").text('Deregister User');
+                    $("#reg-idbox-para").css('display','none');
+                    $("#dereg-idbox-para").css('display','inline');
+                    $("body").addClass("dummyClass").removeClass("dummyClass");
+                });
+
+                var url = "{{base_url}}/update.fetchidboxroles";
+                var jqxhr = $.post(url, function(data) {
+                    //alert(data);
+                    data.forEach(function(group) {
+                        $('#register-idbox-role').append('<input type="checkbox" name="'+group+'" value="'+group+'">&nbsp;&nbsp;&nbsp;'+group+'<br>');
+                    });
+                })
+                .done(function(data) { /* alert('done'); */ })
+                .error(function(XMLHttpRequest, textStatus, errorThrown) { /*alert('error'+errorThrown); */ })
+                .fail(function(data) { /*alert('fail'); */ })
+                .always(function(){ $("#idbox-ajax-loader").css('display','none'); });
+
+
+
+
+                $("#register-idbox-puid").bindWithDelay('blur keyup', function(){
+                    $("#idbox-ajax-loader").css('display','inline');
+                    var url = "{{base_url}}/update.fetchuser";
+                    var jqxhr = $.post(
+                        url,
+                        { p: $(this).val()},
+                        function(data) {
+                            $('#register-idbox-user').text(data.user);
+                            $('#register-idbox-userd').text(data.user);
+                            $("#idbox-ajax-loader").css('display','none');
+                        })
+                        .done(function(data) { /* alert('done'); */ })
+                        .error(function(XMLHttpRequest, textStatus, errorThrown) { /*alert('error'+errorThrown); */ })
+                        .fail(function(data) { /*alert('fail'); */ })
+                        .always(function(){ $("#idbox-ajax-loader").css('display','none'); }
+                    );
+
+
+                    var url = "{{base_url}}/update.fetchidboxuserroles";
+                    var jqxhr = $.post(
+                        url,
+                        { p: $(this).val()},
+                        function(data) {
+                            data.forEach(function(group) {
+                                $("#register-idbox-role :checkbox[value="+group+"]").attr("checked","true");
+                            });
+                        })
+                        .done( function(data) {
+                            idbox_groups = ''
+                            $('#register-idbox-role input[type=checkbox]:checked').each(function () {
+                                idbox_groups += " ("+ $(this).val()+"),";
+                            });
+                            idbox_groups.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                            $('#register-idbox-user-role').text(idbox_groups.substr(0,(idbox_groups.length-1)));
+                        })
+                        .error(function(XMLHttpRequest, textStatus, errorThrown) { /*alert('error'+errorThrown);*/ })
+                        .fail(function(data) { /*alert('fail');*/ })
+                        .always(function(){ $("#idbox-ajax-loader").css('display','none'); });
+                }, 500);
+
+
+                $("#register-idbox-role").bind('blur change', function(){
+                    idbox_groups = ''
+                    $('#register-idbox-role input[type=checkbox]:checked').each(function () {
+                        idbox_groups += " ("+ $(this).val()+"),";
+                    });
+                    idbox_groups.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+                    $('#register-idbox-user-role').text(idbox_groups.substr(0,(idbox_groups.length-1)));
+                });
+
+
+                $("#register-idbox-btn").click(function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    roles = ''
+                    $('#register-idbox-role input[type=checkbox]:checked').each(function () {
+                        roles += $(this).val()+",";
+                    });
+
+                    roles = roles.substr(0,(roles.length-1));
+
+                    var action = $('#register-idbox-action').val();
+                    var url = "{{base_url}}/update.idbox"+action;
+
+                    var jqxhr = $.post(url, { p: $('#register-idbox-puid').val(), r: JSON.stringify(roles)}, function(data) {
+                        if(data){
+                            $('#register-idbox-success').html('<hr><p>Success! '+data+'<br>Reloading page...</p>');
+                            setTimeout(function(){location.reload();},2500);
+                        }
+                        else {
+                            $('#register-idbox-success').html('<hr><p>Unable to complete user action. Please check the provided parameters</p>');
+                        }
+                        $("#idbox-ajax-loader").css('display','none');
+                    })
+                    .done(function(data) { /* alert('done');*/ })
+                    .error(function(XMLHttpRequest, textStatus, errorThrown) { /* alert('error'+errorThrown);*/ })
+                    .fail(function(data) { /* alert('fail'); */})
+                    .always(function(){ $("#idbox-ajax-loader").css('display','none'); });
+                });
+            },
+            opened: function () {
+                $('html,body').css('overflow','hidden');
+
+
+            },
+            close: function () {
+                $('html,body').css('overflow','auto');
+            }
+        });
+    });
+    
+    $("#add-user").click(function(e){
+        e.preventDefault();
+        e.stopPropagation();
+
+        $(this).closest('li.dropdown').removeClass('open');
+
+        $('#add-user-modal').reveal({
+            animation: 'fadeAndPop',
+            animationspeed: 300,
+            closeonbackgroundclick: false,
+            dismissmodalclass: 'close-reveal-modal',
+            open: function () {
+                $("#toggle-register").on('click', function(){
+                    $("#register-action").val('register');
+                    $(this).removeClass('btn-info').addClass('btn-success');
+                    $("#toggle-deregister").removeClass('btn-success').addClass('btn-info');
+                    $("#register-role").removeAttr('disabled');
+                    $("#register-btn").text('Register User');
+                    $("#dereg-para").css('display','none');
+                    $("#reg-para").css('display','inline');
+                    $("body").addClass("dummyClass").removeClass("dummyClass");
+                });
+                $("#toggle-deregister").on('click', function(){
+                    $("#register-action").val('deregister');           
+                    $(this).removeClass('btn-info').addClass('btn-success');
+                    $("#toggle-register").removeClass('btn-success').addClass('btn-info');
+                    $("#register-role").attr('disabled','disabled');
+                    $("#register-btn").text('Deregister User');
+                    $("#reg-para").css('display','none');
+                    $("#dereg-para").css('display','inline');
+                    $("body").addClass("dummyClass").removeClass("dummyClass");
+                });
+                
+                var url = "{{base_url}}/update.fetchroles";
+                var jqxhr = $.post(url, function(data) {
+                    $.each(data.data, function(key, value) {
+                        $('#register-role')
+                            .append($("<option></option>")
+                            .attr("value",key)
+                            .text(value)); 
+                   });
+                })
+                .done(function(data) { /* alert('done'); */ })
+                .error(function(XMLHttpRequest, textStatus, errorThrown) { /*alert('error'+errorThrown); */ })
+                .fail(function() { /*alert('fail'); */ })
+                .always(function(){ $("#ajax-loader").css('display','none'); });
+
+                
+                
+                if((window.location.pathname).indexOf("details.course/id/")!== -1){
+                    $("#ajax-loader").css('display','inline');
+                    $('#register-course').val((window.location.pathname).substring(19));
+                    var url = "{{base_url}}/update.fetchcourse";
+                    var jqxhr = $.post(url, { c: $('#register-course').val()}, function(data) {
+                        var courseObj = $.parseJSON(data);
+                        /*alert(data); */
+                        /*alert(courseObj);*/
+                        $('#register-course-title').text(courseObj.title);
+                        $('#register-course-titled').text(courseObj.title);
+                        $("#ajax-loader").css('display','none');
+                    })
+                    .done(function(data) { /*alert('done');*/ })
+                    .error(function(XMLHttpRequest, textStatus, errorThrown) { /*alert('error'+errorThrown);*/ })
+                    .fail(function(data) { /*alert('fail');*/ })
+                    .always(function(){ $("#ajax-loader").css('display','none'); });
+                }
+                
+                $("#register-puid").bindWithDelay('blur keyup', function(){
+
+                    var field_value = $(this).val();
+                    var puids = field_value.split(',');
+
+                    var names = "";
+                    var url = "{{base_url}}/update.fetchuser";
+
+                    for (var index in puids) {
+                        $("#ajax-loader").css('display','inline');
+                        var _puid = puids[index].trim();
+                        var jqxhr = $.post(
+                                url,
+                                {
+                                    p: _puid
+                                },
+                                function(data) {
+                                })
+                                .done(function(data) { names += data.user + ";";
+                                    console.log(names);
+                                    $("#ajax-loader").css('display','none');})
+                                .error(function(XMLHttpRequest, textStatus, errorThrown) { /*alert('error'+errorThrown);*/ })
+                                .fail(function(data) { /*alert('fail');*/ })
+                                .always(function(){
+                                    $("#ajax-loader").css('display','none');
+                                    $('#register-user').text(names);
+                                    $('#register-userd').text(names);
+                                }
+                                );
+                    }
+                }, 750);
+                
+        
+                $("#register-course").bindWithDelay('blur keyup', function(){
+                    $("#ajax-loader").css('display','inline');
+                    var url = "{{base_url}}/update.fetchcourse";
+                    var jqxhr = $.post(url, { c: $('#register-course').val()}, function(data) {
+                        $('#register-course-title').text(data.title);
+                        $('#register-course-titled').text(data.title);
+                        $("#ajax-loader").css('display','none');
+                    })
+                    .done(function(data) { /*alert('done');*/ })
+                    .error(function(XMLHttpRequest, textStatus, errorThrown) { /* alert('error'+errorThrown);*/ })
+                    .fail(function(data) { /* alert('fail');*/ })
+                    .always(function(){ $("#ajax-loader").css('display','none'); });
+                },500);
+                
+                $("#register-role").bind('blur change', function(){
+                    $('#register-user-role').text($("#register-role option:selected").text());
+                });
+
+                
+                $("#register-btn").click(function(e){
+                    e.preventDefault();
+                    e.stopPropagation();
+                    var action = $('#register-action').val();
+                    var url = "{{base_url}}/update."+action;
+
+                    var field_value = $('#register-puid').val();
+                    var puids = field_value.split(',');
+                    var html = "";
+
+                    for (var index in puids) {
+                        $("#ajax-loader").css('display','inline');
+                        var _puid = puids[index].trim();
+                        if(_puid.length >= 8){
+                            var jqxhr = $.post(url, { c: $('#register-course').val(), p: _puid, r: $('#register-role').val()}, function(data) {
+                                if(data.success){
+                                    html += '<hr><p>Success! '+data.message+'</p><hr>';
+                                }
+                                else {
+                                    html += '<hr><p>Failed! '+data.message+'</p><hr>';
+                                }
+                                $("#ajax-loader").css('display','none');
+                            })
+                            .done(function(data) { /* alert('done');*/ })
+                            .error(function(XMLHttpRequest, textStatus, errorThrown) { /* alert('error'+errorThrown);*/ })
+                            .fail(function(data) { /* alert('fail'); */})
+                            .always(function(){
+                                $("#ajax-loader").css('display','none');
+                                $('#register-success').html(html);
+                            });
+                        } else {
+                            html += '<hr><p>Error! Invalid PUID [' +_puid + ']</p><hr>';
+                        }
+                    }
+
+                });
+            },
+            opened: function () {
+                $('html,body').css('overflow','hidden');
+                
+
+            },
+            close: function () {
+                $('html,body').css('overflow','auto');
+            }
+        });
+      });
+      
+      (function($) {
+
+        $.fn.bindWithDelay = function( type, data, fn, timeout, throttle ) {
+
+            if ( $.isFunction( data ) ) {
+                throttle = timeout;
+                timeout = fn;
+                fn = data;
+                data = undefined;
+            }
+
+            // Allow delayed function to be removed with fn in unbind function
+            fn.guid = fn.guid || ($.guid && $.guid++);
+
+            // Bind each separately so that each element has its own delay
+            return this.each(function() {
+
+                var wait = null;
+
+                function cb() {
+                    var e = $.extend(true, { }, arguments[0]);
+                    var ctx = this;
+                    var throttler = function() {
+                        wait = null;
+                        fn.apply(ctx, [e]);
+                    };
+
+                    if (!throttle) { clearTimeout(wait); wait = null; }
+                    if (!wait) { wait = setTimeout(throttler, timeout); }
+                }
+
+                cb.guid = fn.guid;
+
+                $(this).bind(type, data, cb);
+            });
+        };
+
+        })(jQuery);
+
+</script>

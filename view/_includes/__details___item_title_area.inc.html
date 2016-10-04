@@ -1,0 +1,17 @@
+<div class="row-fluid expand">
+    <div class="span12">
+        {% if bibdata.item_title == '' %}
+            <div class="alert alert-danger">This item needs to have it's bibdata verified, the system could not find a title.</div>
+        {% else %}
+            <h1 class="item-details-title">{{ bibdata.item_title }}</h1>
+        {% endif %}
+        <h4 class="item-details-title">Item ID: <span id="item-id">{{ itemid }}</span> - {{ template_name }}</h4>
+    </div>
+</div><!-- /.row-fluid -->
+
+{% if uri_dead %}
+    <div class="clearfix"></div><br>
+    <div class="row-fluid expand dead-url blink-me">
+        URL is DOWN
+    </div>
+{% endif %}

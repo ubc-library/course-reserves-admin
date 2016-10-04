@@ -1,0 +1,11 @@
+{
+    "title": "title",
+    "journaltitle": "jtitle",
+    "articletitle": "atitle",
+    "doi": "doi",
+    "isbn": "isbn",
+    "callnumber": "callno",
+    "pubmedid": "pmid",
+    "purl": "webcat",
+    "url": "url"
+}
