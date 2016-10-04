@@ -3,10 +3,14 @@ Library Online Course Reserves - Web
 
 ![Build Status](https://proxy-01.library.ubc.ca/build-status/locr--cr-staff)
 
+*/buildfile can be safely ignored, it is used to defined files needed by jenkins to build the project for multiple environments*
+
 Production Deployment
 ----------------------
 
-Still to come
+- Trigger build in Jenkins
+- SFTP the post-build prod folder to the prod server
+- Swap folders
 
 
 Development in Docker - Quick Start to App
